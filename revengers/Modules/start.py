@@ -4,7 +4,6 @@ from revengers import bot
 
 @bot.on_message(filters.command("start") & filters.private)
 async def start_command(bot, message: Message):
-    video_file_id = "AAMCBAADGQECGl3zaHJj2lohhz-C5P7AJnIfObK1lVMAAucHAAKJDm1RtgxzcA0mK2UBAAdtAAM2BA"  # Your saved video file_id
     user = message.from_user.mention  # mention format: clickable user
 
     caption = (
@@ -30,7 +29,7 @@ async def start_command(bot, message: Message):
     )
 
     await message.reply_video(
-        video=video_file_id,
+        video="EiL.mp4",  # local file
         caption=caption,
         reply_markup=buttons
     )
