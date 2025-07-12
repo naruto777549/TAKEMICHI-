@@ -21,10 +21,10 @@ async def start_command(bot, message: Message):
                 InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
             ],
             [
-                InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/YourSupportGroupLink")
+                InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")
             ],
             [
-                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/YourUpdateChannelLink")
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")
             ]
         ]
     )
