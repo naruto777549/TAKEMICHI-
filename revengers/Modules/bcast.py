@@ -51,9 +51,9 @@ async def broadcast_handler(bot, message: Message):
             failed += 1
 
     await message.reply(
-        f"📢 **Broadcast Completed**\n\n"
-        f"👥 Total Users: `{total}`\n"
-        f"✅ Delivered: `{success}`\n"
-        f"⛔ Blocked: `{blocked}`\n"
-        f"❌ Failed: `{failed}`"
+        f"📢 **ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ**\n\n"
+        f"👥 ᴛᴏᴛᴀʟ ᴜsᴇʀs: `{total}`\n"
+        f"✅ ᴅᴇʟɪᴠᴇʀᴇᴅ: `{success}`\n"
+        f"⛔ ʙʟᴏᴄᴋᴇᴅ: `{blocked}`\n"
+        f"❌ ғᴀɪʟᴇᴅ: `{failed}`"
     )
