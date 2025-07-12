@@ -1,21 +1,23 @@
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import (
+    Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+)
 from revengers import bot
-from revengers.db import file_collection, Users  
+from revengers.db import file_collection, Users
+
 
 @bot.on_message(filters.command("start") & filters.private)
 async def start_command(bot, message: Message):
     user = message.from_user
     mention = user.mention
 
-    # Save user to DB (for bcast)
+    # Save user for broadcast
     await Users.update_one(
         {"_id": user.id},
         {"$set": {"name": user.first_name}},
         upsert=True
     )
 
-    # Check if payload exists (/start <code>)
     args = message.text.split(maxsplit=1)
     if len(args) == 2:
         code = args[1]
@@ -36,7 +38,6 @@ async def start_command(bot, message: Message):
 
             except Exception as e:
                 return await message.reply(f"❌ Error sending file:\n<code>{e}</code>")
-
         return await message.reply("❗ Invalid or expired link.")
 
     # No payload - normal welcome
@@ -59,6 +60,74 @@ async def start_command(bot, message: Message):
     ])
 
     await message.reply_video(
+        video=video_file_id,
+        caption=caption,
+        reply_markup=buttons
+    )
+
+
+# Callback: Help
+@bot.on_callback_query(filters.regex("help_menu"))
+async def help_menu(bot, query: CallbackQuery):
+    await query.answer()
+
+    text = (
+        "**🛠 ʜᴇʟᴘ ᴍᴇɴᴜ**\n\n"
+        "`/genlink` → Generate permanent link from video/photo\n"
+        "`/ban` `/unban` → Manage access to bot\n"
+        "`/bcast` → Send a broadcast to all users\n\n"
+        "💡 Just reply with a media to /genlink!"
+    )
+
+    buttons = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_menu")]
+    ])
+
+    await query.message.edit(text, reply_markup=buttons)
+
+
+# Callback: About
+@bot.on_callback_query(filters.regex("about_menu"))
+async def about_menu(bot, query: CallbackQuery):
+    await query.answer()
+
+    text = (
+        "**📦 ᴀʙᴏᴜᴛ ʙᴏᴛ**\n\n"
+        "🔹 Store files permanently\n"
+        "🔹 Generate shareable access links\n"
+        "🔹 Simple & fast to use\n\n"
+        "👑 Owner: @Uzumaki_X_Naruto_6"
+    )
+
+    buttons = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_menu")]
+    ])
+
+    await query.message.edit(text, reply_markup=buttons)
+
+
+# Callback: Back
+@bot.on_callback_query(filters.regex("back_menu"))
+async def back_menu(bot, query: CallbackQuery):
+    user = query.from_user.mention
+    video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
+
+    caption = (
+        f"🌟 {user}, 𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝕥𝕠 𝕥𝕙𝕖 𝔽𝕚𝕝𝕖 𝕍𝕒𝕦𝕝𝕥!\n\n"
+        "⚡ 𝕐𝕠𝕦𝕣 𝕦𝕝𝕥𝕚𝕞𝕒𝕥𝕖 𝕤𝕥𝕠𝕣𝕒𝕘𝕖 𝕙𝕦𝕓.\n"
+        "📁 𝕋𝕣𝕪 /genlink or upload a file now!"
+    )
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
+            InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
+        ],
+        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")],
+        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
+    ])
+
+    await query.message.edit_video(
         video=video_file_id,
         caption=caption,
         reply_markup=buttons
