@@ -14,10 +14,15 @@ async def start_command(bot, message: Message):
         data = await file_collection.find_one({"code": code})
         if data:
             try:
-                return await message.reply_document(
-                    document=data["file_id"],
-                    caption=f"📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸: <code>{code}</code>"
-                )
+    file_type = data.get("type", "document")
+    caption = f"📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸: <code>{code}</code>"
+
+    if file_type == "video":
+        return await message.reply_video(video=data["file_id"], caption=caption)
+    elif file_type == "photo":
+        return await message.reply_photo(photo=data["file_id"], caption=caption)
+    else:
+        return await message.reply_document(document=data["file_id"], caption=caption)
             except Exception as e:
                 return await message.reply(f"❌ Error sending file:\n<code>{e}</code>")
         else:
