@@ -1,10 +1,29 @@
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from revengers import bot
+from revengers.db import file_collection
 
 @bot.on_message(filters.command("start") & filters.private)
 async def start_command(bot, message: Message):
     user = message.from_user.mention
+
+    # Check for payload (e.g., /start abc12)
+    args = message.text.split(maxsplit=1)
+    if len(args) == 2:
+        code = args[1]
+        data = await file_collection.find_one({"code": code})
+        if data:
+            try:
+                return await message.reply_document(
+                    document=data["file_id"],
+                    caption=f"📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸: <code>{code}</code>"
+                )
+            except Exception as e:
+                return await message.reply(f"❌ Error sending file:\n<code>{e}</code>")
+        else:
+            return await message.reply("❗ Invalid or expired link.")
+
+    # Normal start (no payload)
     video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
 
     caption = (
@@ -34,28 +53,3 @@ async def start_command(bot, message: Message):
         caption=caption,
         reply_markup=buttons
     )
-
-from revengers.db import file_collection
-
-@bot.on_message(filters.command("start") & filters.private)
-async def start_command(bot, message: Message):
-    user = message.from_user.mention
-
-    # Parse payload (code from start)
-    args = message.text.split(maxsplit=1)
-    if len(args) == 2:
-        code = args[1]
-        data = await file_collection.find_one({"code": code})
-        if data:
-            try:
-                return await message.reply_document(
-                    document=data["file_id"],
-                    caption=f"📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸: <code>{code}</code>"
-                )
-            except Exception as e:
-                return await message.reply(f"❌ Error sending file:\n<code>{e}</code>")
-        else:
-            return await message.reply("❗ Invalid or expired link.")
-
-    # No code, send normal welcome message (as before)
-    ...
