@@ -1,35 +1,26 @@
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from revengers import bot  
+from pyrogram.types import Message
+from revengers import bot
 
-@bot.on_message(filters.command("start") & filters.private)
-async def start_command(bot, message: Message):
-    user = message.from_user.mention  # mention format: clickable user
+@bot.on_message(filters.command("link") & filters.private)
+async def link_command(bot, message: Message):
+    if not message.reply_to_message or not (message.reply_to_message.video or message.reply_to_message.document):
+        return await message.reply("❗ Reply to a video or file with /link to generate a download link.")
 
-    caption = (
-        f"🌟 <b>{user}, Welcome to the File Vault!</b>\n\n"
-        "⚡ <i>Your ultimate hideout for permanent file storage!</i>\n\n"
-        "📂 Save files, grab shareable links, and access them anytime.\n\n"
-        "📥 <b>Drop a file to unleash the power</b> or hit /help for the full ninja scroll! 🚀"
+    media = message.reply_to_message.video or message.reply_to_message.document
+    file_id = media.file_id
+    file_name = media.file_name if hasattr(media, 'file_name') and media.file_name else "Unnamed"
+    file_size = round(media.file_size / 1024 / 1024, 2)
+
+    # Build your link using file_id — the actual implementation depends on how you're serving files
+    # For Pyrogram bots, you typically can't share direct links unless you host files somewhere
+    # But we can send back a command that uses file_id again (for internal bot use)
+    response = (
+        f"🎬 <b>File Name:</b> <code>{file_name}</code>\n"
+        f"📦 <b>Size:</b> {file_size} MB\n"
+        f"🔗 <b>Sharable Command:</b>\n"
+        f"<code>/get {file_id}</code>\n\n"
+        f"✨ Use this command to regenerate this file anytime!"
     )
 
-    buttons = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("📜 Help", callback_data="help_menu"),
-                InlineKeyboardButton("📚 About", callback_data="about_menu")
-            ],
-            [
-                InlineKeyboardButton("👥 Support Group", url="https://t.me/YourSupportGroupLink")
-            ],
-            [
-                InlineKeyboardButton("📢 Update Channel", url="https://t.me/YourUpdateChannelLink")
-            ]
-        ]
-    )
-
-    await message.reply_video(
-        video="AgADabc123xyz...",
-        caption=caption,
-        reply_markup=buttons
-    )
+    await message.reply(response)
