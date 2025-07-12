@@ -5,7 +5,7 @@ from revengers.db import Banned
 from config import ADMINS
 
 
-def extract_user_id(message: Message) -> int | None:
+async def extract_user_id(message: Message) -> int | None:
     # 1. From reply
     if message.reply_to_message:
         return message.reply_to_message.from_user.id
@@ -18,8 +18,11 @@ def extract_user_id(message: Message) -> int | None:
 
     # Username format
     if arg.startswith("@"):
-        user = bot.get_users(arg)
-        return user.id if user else None
+        try:
+            user = await bot.get_users(arg)
+            return user.id if user else None
+        except:
+            return None
 
     # Numeric ID format
     if arg.isdigit():
@@ -33,7 +36,7 @@ async def ban_user(bot, message: Message):
     if message.from_user.id not in ADMINS:
         return
 
-    user_id = extract_user_id(message)
+    user_id = await extract_user_id(message)
 
     if not user_id:
         return await message.reply("❌ Usage: `/ban @username`, `/ban user_id`, or reply to a user's message.", quote=True)
@@ -50,7 +53,7 @@ async def unban_user(bot, message: Message):
     if message.from_user.id not in ADMINS:
         return
 
-    user_id = extract_user_id(message)
+    user_id = await extract_user_id(message)
 
     if not user_id:
         return await message.reply("❌ Usage: `/unban @username`, `/unban user_id`, or reply to a user's message.", quote=True)
