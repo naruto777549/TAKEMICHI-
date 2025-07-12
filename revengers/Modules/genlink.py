@@ -30,11 +30,13 @@ async def genlink_handler(bot, message: Message):
 
     media = message.reply_to_message.video or message.reply_to_message.photo
     file_id = media.file_id
+    caption = message.reply_to_message.caption  # May be None
 
-    # ✅ Save to DB
+    # Save file metadata to DB
     await file_collection.insert_one({
         "code": code,
         "file_id": file_id,
+        "caption": caption,
         "type": "video" if message.reply_to_message.video else "photo"
     })
 
