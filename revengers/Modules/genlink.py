@@ -3,6 +3,7 @@ import string
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from revengers import bot
+from revengers.db import file_collection  
 
 BOT_USERNAME = "UzumakiFileHavenbot"
 UPDATE_CHANNEL = "https://t.me/Bey_war_updates"
@@ -27,6 +28,16 @@ async def genlink_handler(bot, message: Message):
     code = generate_code()
     link = f"https://t.me/{BOT_USERNAME}?start={code}"
 
+    media = message.reply_to_message.video or message.reply_to_message.photo
+    file_id = media.file_id
+
+    # ✅ Save to DB
+    await file_collection.insert_one({
+        "code": code,
+        "file_id": file_id,
+        "type": "video" if message.reply_to_message.video else "photo"
+    })
+
     buttons = InlineKeyboardMarkup(
         [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=UPDATE_CHANNEL)]]
     )
@@ -35,5 +46,3 @@ async def genlink_handler(bot, message: Message):
         f"📎 Here's your file link:\n<code>{link}</code>",
         reply_markup=buttons
     )
-
-    # TODO: Save the file_id and `code` to database for /start to fetch it later
