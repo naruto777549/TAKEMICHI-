@@ -17,14 +17,14 @@ async def start_command(bot, message: Message):
     buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("📜 Help", callback_data="help_menu"),
-                InlineKeyboardButton("📚 About", callback_data="about_menu")
+                InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
+                InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
             ],
             [
-                InlineKeyboardButton("👥 Support Group", url="https://t.me/YourSupportGroupLink")
+                InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/YourSupportGroupLink")
             ],
             [
-                InlineKeyboardButton("📢 Update Channel", url="https://t.me/YourUpdateChannelLink")
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/YourUpdateChannelLink")
             ]
         ]
     )
