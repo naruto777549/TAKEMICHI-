@@ -7,7 +7,7 @@ from revengers.db import file_collection
 async def start_command(bot, message: Message):
     user = message.from_user.mention
 
-    # Check for payload (e.g., /start abc12)
+    # Check if payload exists (/start <code>)
     args = message.text.split(maxsplit=1)
     if len(args) == 2:
         code = args[1]
@@ -15,7 +15,7 @@ async def start_command(bot, message: Message):
         if data:
             try:
                 file_type = data.get("type", "document")
-                caption = f"📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸: <code>{code}</code>"
+                caption = data.get("caption") or "📦 𝗙𝗶𝗹𝗲 𝗳𝗿𝗼𝗺 𝗟𝗶𝗻𝗸"
 
                 if file_type == "video":
                     return await message.reply_video(video=data["file_id"], caption=caption)
@@ -29,7 +29,7 @@ async def start_command(bot, message: Message):
         else:
             return await message.reply("❗ Invalid or expired link.")
 
-    # Normal /start message
+    # No payload - Normal welcome
     video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
 
     caption = (
@@ -39,23 +39,13 @@ async def start_command(bot, message: Message):
         "📥 𝔻𝕣𝕠𝕡 𝕒 𝕗𝕚𝕝𝕖 𝕥𝕠 𝕦𝕟𝕝𝕖𝕒𝕤𝕙 𝕥𝕙𝕖 𝕡𝕠𝕨𝕖𝕣 𝕠𝕣 𝕙𝕚𝕥 /help 𝕗𝕠𝕣 𝕥𝕙𝕖 𝕗𝕦𝕝𝕝 𝕟𝕚𝕟𝕛𝕒 𝕤𝕔𝕣𝕠𝕝𝕝! 🚀"
     )
 
-    buttons = InlineKeyboardMarkup(
+    buttons = InlineKeyboardMarkup([
         [
-            [
-                InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
-                InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
-            ],
-            [
-                InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")
-            ],
-            [
-                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")
-            ]
-        ]
-    )
+            InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
+            InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
+        ],
+        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")],
+        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
+    ])
 
-    await message.reply_video(
-        video=video_file_id,
-        caption=caption,
-        reply_markup=buttons
-    )
+    await message.reply_video(video=video_file_id, caption=caption, reply_markup=buttons)
