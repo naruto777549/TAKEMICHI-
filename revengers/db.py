@@ -6,4 +6,5 @@ db = client["revengers"]
 
 Users = db["users"] 
 users = Users 
-Banned = []          
+Banned = []        
+file_collection = db["files"]  
