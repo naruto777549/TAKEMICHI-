@@ -9,7 +9,7 @@ commands:
   build:
     - "pip install -r requirements.txt"
   start:
-    - "python3 -m Black"
+    - "python3 -m revengers"
 
 env:
   - "ENVIRONMENT=production"
