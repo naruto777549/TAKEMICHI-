@@ -29,7 +29,7 @@ async def start_command(bot, message: Message):
     )
 
     await message.reply_video(
-        video="EiL.mp4",  # local file
+        video="AgADabc123xyz...",
         caption=caption,
         reply_markup=buttons
     )
