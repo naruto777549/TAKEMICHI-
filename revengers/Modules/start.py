@@ -65,27 +65,6 @@ async def start_command(bot, message: Message):
         reply_markup=buttons
     )
 
-
-# Callback: Help
-@bot.on_callback_query(filters.regex("help_menu"))
-async def help_menu(bot, query: CallbackQuery):
-    await query.answer()
-
-    text = (
-        "**🛠 ʜᴇʟᴘ ᴍᴇɴᴜ**\n\n"
-        "`/genlink` → Generate permanent link from video/photo\n"
-        "`/ban` `/unban` → Manage access to bot\n"
-        "`/bcast` → Send a broadcast to all users\n\n"
-        "💡 Just reply with a media to /genlink!"
-    )
-
-    buttons = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_menu")]
-    ])
-
-    await query.message.edit(text, reply_markup=buttons)
-
-
 # Callback: About
 @bot.on_callback_query(filters.regex("about_menu"))
 async def about_menu(bot, query: CallbackQuery):
@@ -104,7 +83,6 @@ async def about_menu(bot, query: CallbackQuery):
     ])
 
     await query.message.edit(text, reply_markup=buttons)
-
 
 # Callback: Back
 @bot.on_callback_query(filters.regex("back_menu"))
