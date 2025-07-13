@@ -2,20 +2,18 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
 from pyrogram.errors import PeerIdInvalid, UserIsBlocked, InputUserDeactivated
 from revengers import bot
-from config import ADMINS
 from revengers.db import Users, Banned
+from revengers.utils.checks import is_admin  # ✅ Admin check
 
 @bot.on_message(filters.command("bcast") & filters.private)
 async def broadcast_handler(bot, message: Message):
-    if message.from_user.id not in ADMINS:
+    if not await is_admin(message.from_user.id):
         return await message.reply("🚫 You're not authorized to use this.")
 
     if not message.reply_to_message:
         return await message.reply("❗ Reply to a message (text/photo/video/document) to broadcast.")
 
     original = message.reply_to_message
-
-    # Extract buttons if available
     keyboard = original.reply_markup if isinstance(original.reply_markup, InlineKeyboardMarkup) else None
 
     total = 0
@@ -29,7 +27,6 @@ async def broadcast_handler(bot, message: Message):
             continue
 
         total += 1
-
         try:
             if original.text:
                 await bot.send_message(user_id, text=original.text, reply_markup=keyboard)
@@ -51,9 +48,9 @@ async def broadcast_handler(bot, message: Message):
             failed += 1
 
     await message.reply(
-        f"📢 **ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ**\n\n"
-        f"👥 ᴛᴏᴛᴀʟ ᴜsᴇʀs: `{total}`\n"
-        f"✅ ᴅᴇʟɪᴠᴇʀᴇᴅ: `{success}`\n"
-        f"⛔ ʙʟᴏᴄᴋᴇᴅ: `{blocked}`\n"
-        f"❌ ғᴀɪʟᴇᴅ: `{failed}`"
+        f"📢 **Broadcast Completed**\n\n"
+        f"👥 Total Users: `{total}`\n"
+        f"✅ Delivered: `{success}`\n"
+        f"⛔ Blocked: `{blocked}`\n"
+        f"❌ Failed: `{failed}`"
     )
