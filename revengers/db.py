@@ -4,7 +4,9 @@ from config import MONGO_URL
 client = AsyncIOMotorClient(MONGO_URL)
 db = client["revengers"]
 
-Users = db["users"] 
-users = Users 
-Banned = []        
-file_collection = db["files"]  
+Users = db["users"]
+users = Users
+Banned = []  
+file_collection = db["files"]
+
+Admins = db["admins"]  
