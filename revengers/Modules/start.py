@@ -59,11 +59,13 @@ async def start_command(bot, message: Message):
         [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
     ])
 
-    await message.reply_video(
-        video=video_file_id,
-        caption=caption,
-        reply_markup=buttons
-    )
+    await query.message.delete()
+await bot.send_video(
+    chat_id=query.message.chat.id,
+    video=video_file_id,
+    caption=caption,
+    reply_markup=buttons
+)
 
 # Callback: About
 @bot.on_callback_query(filters.regex("about_menu"))
@@ -105,11 +107,13 @@ async def back_menu(bot, query: CallbackQuery):
         [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
     ])
 
-    await query.message.edit_video(
-        video=video_file_id,
-        caption=caption,
-        reply_markup=buttons
-    )
+    await query.message.delete()
+await bot.send_video(
+    chat_id=query.message.chat.id,
+    video=video_file_id,
+    caption=caption,
+    reply_markup=buttons
+)
 
 @bot.on_callback_query(filters.regex("help_menu"))
 async def help_menu_callback(bot, query: CallbackQuery):
