@@ -2,9 +2,32 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Banned
-from revengers.utils.checks import is_admin  # ✅ Import the check
+from revengers.utils.checks import is_admin  # ✅ Admin check
 
-# ... keep extract_user_id() as is
+# ✅ Helper to extract user from reply, @username, or user ID
+async def extract_user_id(message: Message):
+    if message.reply_to_message:
+        return message.reply_to_message.from_user.id, message.reply_to_message.from_user.first_name
+
+    if len(message.command) < 2:
+        return None, None
+
+    arg = message.command[1]
+
+    # Username format
+    if arg.startswith("@"):
+        try:
+            user = await bot.get_users(arg)
+            return user.id, user.first_name
+        except:
+            return None, None
+
+    # Numeric ID format
+    if arg.isdigit():
+        return int(arg), None
+
+    return None, None
+
 
 @bot.on_message(filters.command("ban") & filters.private)
 async def ban_user(bot, message: Message):
