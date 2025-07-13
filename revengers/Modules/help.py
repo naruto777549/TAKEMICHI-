@@ -62,7 +62,7 @@ async def help_menu_callback(bot, query: CallbackQuery):
             InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/Uzumaki_X_Naruto_6"),
             InlineKeyboardButton("ᴅᴇᴠʟᴏᴘᴇʀ", url="https://t.me/Uzumaki_X_Naruto_6")
         ],
-        [InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_menu")]
+        [InlineKeyboardButton("ʙᴀᴄᴋ", callback_data="back_menu")]
     ])
 
     await query.message.delete()
