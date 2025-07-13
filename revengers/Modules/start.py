@@ -6,6 +6,34 @@ from revengers import bot
 from revengers.db import file_collection, Users
 
 
+# Reusable welcome video sender
+async def send_start_video(bot, chat_id, mention):
+    video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
+
+    caption = (
+        f"🌟 {mention}, 𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕥𝕠 𝕥𝕙𝕖 𝔽𝕚𝕝𝕖 𝕍𝕒𝕦𝕝𝕥!\n\n"
+        "⚡ 𝕐𝕠𝕦𝕣 𝕦𝕝𝕥𝕚𝕞𝕒𝕥𝕖 𝕙𝕚𝕕𝕖𝕠𝕦𝕥 𝕗𝕠𝕣 𝕡𝕖𝕣𝕞𝕒𝕟𝕖𝕟𝕥 𝕗𝕚𝕝𝕖 𝕤𝕥𝕠𝕣𝕒𝕘𝕖!\n\n"
+        "📂 𝕊𝕒𝕧𝕖 𝕗𝕚𝕝𝕖𝕤, 𝕘𝕣𝕒𝕓 𝕤𝕙𝕒𝕣𝕖𝕒𝕓𝕝𝕖 𝕝𝕚𝕟𝕜𝕤, 𝕒𝕟𝕕 𝕒𝕔𝕔𝕖𝕤𝕤 𝕥𝕙𝕖𝕞 𝕒𝕟𝕪𝕥𝕚𝕞𝕖.\n\n"
+        "📥 𝔻𝕣𝕠𝕡 𝕒 𝕗𝕚𝕝𝕖 𝕥𝕠 𝕦𝕟𝕝𝕖𝕒𝕤𝕙 𝕥𝕙𝕖 𝕡𝕠𝕨𝕖𝕣 𝕠𝕣 𝕙𝕚𝕥 /help 𝕗𝕠𝕣 𝕥𝕙𝕖 𝕗𝕦𝕝𝕝 𝕟𝕚𝕟𝕛𝕒 𝕤𝕔𝕣𝕠𝕝𝕝! 🚀"
+    )
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
+            InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
+        ],
+        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")],
+        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
+    ])
+
+    await bot.send_video(
+        chat_id=chat_id,
+        video=video_file_id,
+        caption=caption,
+        reply_markup=buttons
+    )
+
+
 @bot.on_message(filters.command("start") & filters.private)
 async def start_command(bot, message: Message):
     user = message.from_user
@@ -41,33 +69,9 @@ async def start_command(bot, message: Message):
         return await message.reply("❗ Invalid or expired link.")
 
     # No payload - normal welcome
-    video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
+    await send_start_video(bot, message.chat.id, mention)
 
-    caption = (
-        f"🌟 {mention}, 𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕥𝕠 𝕥𝕙𝕖 𝔽𝕚𝕝𝕖 𝕍𝕒𝕦𝕝𝕥!\n\n"
-        "⚡ 𝕐𝕠𝕦𝕣 𝕦𝕝𝕥𝕚𝕞𝕒𝕥𝕖 𝕙𝕚𝕕𝕖𝕠𝕦𝕥 𝕗𝕠𝕣 𝕡𝕖𝕣𝕞𝕒𝕟𝕖𝕟𝕥 𝕗𝕚𝕝𝕖 𝕤𝕥𝕠𝕣𝕒𝕘𝕖!\n\n"
-        "📂 𝕊𝕒𝕧𝕖 𝕗𝕚𝕝𝕖𝕤, 𝕘𝕣𝕒𝕓 𝕤𝕙𝕒𝕣𝕖𝕒𝕓𝕝𝕖 𝕝𝕚𝕟𝕜𝕤, 𝕒𝕟𝕕 𝕒𝕔𝕔𝕖𝕤𝕤 𝕥𝕙𝕖𝕞 𝕒𝕟𝕪𝕥𝕚𝕞𝕖.\n\n"
-        "📥 𝔻𝕣𝕠𝕡 𝕒 𝕗𝕚𝕝𝕖 𝕥𝕠 𝕦𝕟𝕝𝕖𝕒𝕤𝕙 𝕥𝕙𝕖 𝕡𝕠𝕨𝕖𝕣 𝕠𝕣 𝕙𝕚𝕥 /help 𝕗𝕠𝕣 𝕥𝕙𝕖 𝕗𝕦𝕝𝕝 𝕟𝕚𝕟𝕛𝕒 𝕤𝕔𝕣𝕠𝕝𝕝! 🚀"
-    )
 
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
-            InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
-        ],
-        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")],
-        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
-    ])
-
-    await query.message.delete()
-await bot.send_video(
-    chat_id=query.message.chat.id,
-    video=video_file_id,
-    caption=caption,
-    reply_markup=buttons
-)
-
-# Callback: About
 @bot.on_callback_query(filters.regex("about_menu"))
 async def about_menu(bot, query: CallbackQuery):
     await query.answer()
@@ -86,34 +90,13 @@ async def about_menu(bot, query: CallbackQuery):
 
     await query.message.edit(text, reply_markup=buttons)
 
-# Callback: Back
+
 @bot.on_callback_query(filters.regex("back_menu"))
 async def back_menu(bot, query: CallbackQuery):
-    user = query.from_user.mention
-    video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
-
-    caption = (
-        f"🌟 {user}, 𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝕥𝕠 𝕥𝕙𝕖 𝔽𝕚𝕝𝕖 𝕍𝕒𝕦𝕝𝕥!\n\n"
-        "⚡ 𝕐𝕠𝕦𝕣 𝕦𝕝𝕥𝕚𝕞𝕒𝕥𝕖 𝕤𝕥𝕠𝕣𝕒𝕘𝕖 𝕙𝕦𝕓.\n"
-        "📁 𝕋𝕣𝕪 /genlink or upload a file now!"
-    )
-
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
-            InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
-        ],
-        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Bey_war_updates")],
-        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url="https://t.me/+ZyRZJntl2FU0NTk1")]
-    ])
-
     await query.message.delete()
-await bot.send_video(
-    chat_id=query.message.chat.id,
-    video=video_file_id,
-    caption=caption,
-    reply_markup=buttons
-)
+    mention = query.from_user.mention
+    await send_start_video(bot, query.message.chat.id, mention)
+
 
 @bot.on_callback_query(filters.regex("help_menu"))
 async def help_menu_callback(bot, query: CallbackQuery):
