@@ -5,7 +5,6 @@ from revengers import bot
 from revengers.db import Admins
 from revengers.utils.checks import is_admin
 
-
 @bot.on_message(filters.command("list_admin") & filters.private)
 async def list_admins_cmd(bot, message: Message):
     if not await is_admin(message.from_user.id):
