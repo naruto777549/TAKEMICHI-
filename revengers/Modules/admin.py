@@ -4,7 +4,7 @@ from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Admins
 
-OWNER_ID = 123456789  
+OWNER_ID = 7576729648  
 
 @bot.on_message(filters.command("add_admin") & filters.user(OWNER_ID))
 async def add_admin(bot, message: Message):
