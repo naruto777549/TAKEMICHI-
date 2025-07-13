@@ -10,18 +10,17 @@ async def list_admins_cmd(bot, message: Message):
     if not await is_admin(message.from_user.id):
         return await message.reply("🚫 You're not authorized to use this command.")
 
-    cursor = Admins.find()
     admin_list = []
-    async for admin in cursor:
+    async for admin in Admins.find():
         admin_id = admin["_id"]
         try:
             user = await bot.get_users(admin_id)
-            admin_list.append(f"• {user.mention} (`{admin_id}`)")
+            admin_list.append(f"• [{user.first_name}](tg://user?id={admin_id}) (`{admin_id}`)")
         except:
-            admin_list.append(f"• `{admin_id}`")
+            admin_list.append(f"• Unknown User (`{admin_id}`)")
 
     if not admin_list:
         return await message.reply("⚠️ No admins found.")
 
     text = "**👑 Current Admins:**\n\n" + "\n".join(admin_list)
-    await message.reply(text)
+    await message.reply(text, disable_web_page_preview=True)
