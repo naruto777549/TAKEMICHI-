@@ -1,4 +1,5 @@
-kurigram
+pyrogram==2.0.106
+kurigram==2.0.106
 tgcrypto 
 pymongo
 motor
