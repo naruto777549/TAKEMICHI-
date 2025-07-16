@@ -1,6 +1,5 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from pyrogram.enums import LinkPreviewOptions
 from revengers import bot
 from revengers.db import Admins
 from revengers.utils.checks import is_admin
@@ -24,6 +23,5 @@ async def list_admins_cmd(bot, message: Message):
 
     text = "**👑 Current Admins:**\n\n" + "\n".join(admin_list)
     await message.reply(
-        text,
-        link_preview_options=LinkPreviewOptions.DISABLE
+        text,  
     )
