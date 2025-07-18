@@ -11,7 +11,7 @@ BOT_USERNAME = "UzumakiFileHavenbot"
 # Use channel username or ID
 CHANNELS = [
     ("Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),            # Public username (no @ or link)
-    ("-1002295205723", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")               # Private channel ID (bot must be a member)
+    ("-1002523949507", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")               # Private channel ID (bot must be a member)
 ]
 
 async def check_subscription(bot, message: Message):
