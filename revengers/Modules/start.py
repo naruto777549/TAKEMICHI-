@@ -11,7 +11,7 @@ from revengers.db import file_collection, Users
 # CHANNEL usernames or invite links (public/private)
 CHANNELS = [
     ("Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),
-    ("-1002295205723", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
+    ("-1002523949507", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
 ]
 
 
