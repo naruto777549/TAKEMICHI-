@@ -7,23 +7,26 @@ from revengers import bot
 from revengers.db import file_collection, Banned
 
 BOT_USERNAME = "UzumakiFileHavenbot"
-CHANNELS = [
-    ("https://t.me/Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),
-    ("https://t.me/+ZyRZJntl2FU0NTk1", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
-]
 
+# Use channel username or ID
+CHANNELS = [
+    ("Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),            # Public username (no @ or link)
+    ("-1002295205723", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")               # Private channel ID (bot must be a member)
+]
 
 async def check_subscription(bot, message: Message):
     user_id = message.from_user.id
-    for url, name in CHANNELS:
+    for channel, name in CHANNELS:
         try:
-            chat = await bot.get_chat(url.split("/")[-1].replace("+", ""))
-            member = await bot.get_chat_member(chat.id, user_id)
+            member = await bot.get_chat_member(channel, user_id)
             if member.status in ("left", "kicked"):
                 raise UserNotParticipant
         except:
+            # Buttons to all channels
             buttons = InlineKeyboardMarkup([
-                [InlineKeyboardButton(name, url=url)] for url, name in CHANNELS
+                [InlineKeyboardButton(name, url=f"https://t.me/{channel.replace('-100', 'c/')}")] if channel.startswith("-100")
+                else [InlineKeyboardButton(name, url=f"https://t.me/{channel}")]
+                for channel, name in CHANNELS
             ])
             await message.reply(
                 f"›› ʜᴇʏ {message.from_user.mention} ×\n\n"
@@ -51,7 +54,7 @@ async def genlink_handler(bot, message: Message):
         message.reply_to_message.video or message.reply_to_message.photo
     ):
         buttons = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=CHANNELS[0][0])]]
+            [[InlineKeyboardButton(CHANNELS[0][1], url=f"https://t.me/{CHANNELS[0][0]}")]]
         )
         return await message.reply(
             "❗ Reply to a video or image to generate a link.",
@@ -72,7 +75,7 @@ async def genlink_handler(bot, message: Message):
     })
 
     buttons = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=CHANNELS[0][0])]]
+        [[InlineKeyboardButton(CHANNELS[0][1], url=f"https://t.me/{CHANNELS[0][0]}")]]
     )
 
     await message.reply(
