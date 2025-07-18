@@ -1,3 +1,5 @@
+import random
+import string
 from pyrogram import filters
 from pyrogram.types import (
     Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -6,23 +8,26 @@ from pyrogram.errors import UserNotParticipant
 from revengers import bot
 from revengers.db import file_collection, Users
 
+# CHANNEL usernames or invite links (public/private)
 CHANNELS = [
-    ("https://t.me/Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),
-    ("https://t.me/+ZyRZJntl2FU0NTk1", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
+    ("Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),
+    ("-1002295205723", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
 ]
 
 
 async def check_subscription(bot, message: Message):
     user_id = message.from_user.id
-    for url, name in CHANNELS:
+    for channel, name in CHANNELS:
         try:
-            chat = await bot.get_chat(url.split("/")[-1].replace("+", ""))
-            member = await bot.get_chat_member(chat.id, user_id)
+            member = await bot.get_chat_member(channel, user_id)
             if member.status in ("left", "kicked"):
                 raise UserNotParticipant
         except:
+            # Construct button links
             buttons = InlineKeyboardMarkup([
-                [InlineKeyboardButton(name, url=url)] for url, name in CHANNELS
+                [
+                    InlineKeyboardButton(name, url=f"https://t.me/{channel.replace('-100', 'c/')}" if str(channel).startswith("-100") else f"https://t.me/{channel}")
+                ] for channel, name in CHANNELS
             ])
             await message.reply(
                 f"›› ʜᴇʏ {message.from_user.mention} ×\n\n"
@@ -34,7 +39,7 @@ async def check_subscription(bot, message: Message):
     return True
 
 
-# Welcome video
+# Welcome video sender
 async def send_start_video(bot, chat_id, mention):
     video_file_id = "BAACAgQAAxkBAAMHaHKBXy2VCMPrAAH8VcpV91M5lP9fAALnBwACiQ5tUWroh4Dwqk4rHgQ"
     caption = (
@@ -43,13 +48,14 @@ async def send_start_video(bot, chat_id, mention):
         "📂 𝕊𝕒𝕧𝕖 𝕗𝕚𝕝𝕖𝕤, 𝕘𝕣𝕒𝕓 𝕤𝕙𝕒𝕣𝕖𝕒𝕓𝕝𝕖 𝕝𝕚𝕟𝕜𝕤, 𝕒𝕟𝕕 𝕒𝕔𝕔𝕖𝕤𝕤 𝕥𝕙𝕖𝕞 𝕒𝕟𝕪𝕥𝕚𝕞𝕖.\n\n"
         "📥 𝔻𝕣𝕠𝕡 𝕒 𝕗𝕚𝕝𝕖 𝕥𝕠 𝕦𝕟𝕝𝕖𝕒𝕤𝕙 𝕥𝕙𝕖 𝕡𝕠𝕨𝕖𝕣 𝕠𝕣 𝕙𝕚𝕥 /help 𝕗𝕠𝕣 𝕥𝕙𝕖 𝕗𝕦𝕝𝕝 𝕟𝕚𝕟𝕛𝕒 𝕤𝕔𝕣𝕠𝕝𝕝! 🚀"
     )
+
     buttons = InlineKeyboardMarkup([
         [
             InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help_menu"),
             InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data="about_menu")
         ],
-        [InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ", url=CHANNELS[1][0])],
-        [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=CHANNELS[0][0])]
+        [InlineKeyboardButton(CHANNELS[1][1], url=f"https://t.me/{CHANNELS[1][0].replace('-100', 'c/')}" if CHANNELS[1][0].startswith("-100") else f"https://t.me/{CHANNELS[1][0]}")],
+        [InlineKeyboardButton(CHANNELS[0][1], url=f"https://t.me/{CHANNELS[0][0]}")]
     ])
     await bot.send_video(chat_id, video_file_id, caption=caption, reply_markup=buttons)
 
