@@ -8,8 +8,8 @@ from revengers.db import file_collection, Banned
 
 BOT_USERNAME = "UzumakiFileHavenbot"
 CHANNELS = [
-    ("https://t.me/Bey_war_updates", ""),
-    ("https://t.me/+ZyRZJntl2FU0NTk1", "Support Group")
+    ("https://t.me/Bey_war_updates", "ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ"),
+    ("https://t.me/+ZyRZJntl2FU0NTk1", "sᴜᴘᴘᴏʀᴛ ᴄʜᴀɴɴᴇʟ")
 ]
 
 
