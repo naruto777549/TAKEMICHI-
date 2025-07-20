@@ -2,6 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import waifu_collection
+from pyrogram.enums import ParseMode
 
 OWNER_ID = 7576729648  # Replace with your actual ID
 
@@ -24,4 +25,9 @@ async def upload_waifu(bot, message: Message):
         "caption": caption
     })
 
-    await message.reply_photo(photo=image, caption=f"✅ Added:\n{caption}", quote=True)
+    await message.reply_photo(
+        photo=image,
+        caption=f"✅ Added:\n{caption}",
+        parse_mode=ParseMode.MARKDOWN,
+        quote=True
+    )
