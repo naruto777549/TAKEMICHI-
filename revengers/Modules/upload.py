@@ -7,7 +7,7 @@ from pyrogram.enums import ChatType
 # /upload command (admin-only, private chat)
 @bot.on_message(filters.command("upload") & filters.private)
 async def upload_waifu(bot, message: Message):
-    if not message.from_user.id in [OWNER_ID]:  # replace OWNER_ID with actual ID
+    if not message.from_user.id in [7576729648]:  # replace OWNER_ID with actual ID
         return await message.reply("❌ You aren't authorized to upload waifus.")
 
     args = message.text.split(maxsplit=3)
