@@ -10,3 +10,4 @@ Banned = []
 file_collection = db["files"]
 
 Admins = db["admins"]  
+waifu_collection = db["waifus"]
