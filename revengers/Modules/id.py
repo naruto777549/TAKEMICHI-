@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from ProFileRenamer import bot 
+from revengers import bot
 
 @bot.on_message(filters.command("id"))
 async def get_ids(bot, message: Message):
