@@ -20,17 +20,19 @@ async def extract_user_id(message: Message):
         return int(arg)
     return None
 
-@bot.on_message(filters.command("remove_admin"))  # Removed .private
+@bot.on_message(filters.command("remove_admin") & (filters.group | filters.private))
 async def remove_admin_cmd(bot, message: Message):
-    if not await is_admin(message.from_user.id):  # Proper check
-        return await message.reply("🚫 You're not authorized to use this.")
+    sender_id = message.from_user.id
+
+    if not await is_admin(sender_id):
+        return await message.reply("🚫 You are not authorized to use this command.")
 
     user_id = await extract_user_id(message)
     if not user_id:
-        return await message.reply("❌ Usage: `/remove_admin @username`, `/remove_admin user_id`, or reply to user.", quote=True)
+        return await message.reply("❗ Usage: `/remove_admin @username`, `/remove_admin user_id`, or reply to the user.", quote=True)
 
     if not await is_admin(user_id):
         return await message.reply("⚠️ That user is not an admin.", quote=True)
 
-    await Admins.delete_one({"_id": user_id})
+    await Admins.update_one({"_id": user_id}, {"$set": {"is_admin": False}})
     return await message.reply(f"✅ Removed user `{user_id}` from admin list.", quote=True)
