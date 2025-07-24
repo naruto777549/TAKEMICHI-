@@ -1,19 +1,22 @@
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
-from revengers.db import Admins
 from revengers.utils.is_admin import is_admin
+from revengers.utils.extract_user import extract_user_id
+from revengers.db import add_admin, is_admin as check_admin
 
 @bot.on_message(filters.command("add_admin") & (filters.group | filters.private) & is_admin)
-async def add_admin(bot, message: Message):
+async def add_admin_cmd(bot, message: Message):
     user_id, name = await extract_user_id(message)
 
     if not user_id:
-        return await message.reply("❗ Usage: `/add_admin @username`, `/add_admin user_id`, or reply to the user.", quote=True)
+        return await message.reply(
+            "❗ Usage: `/add_admin @username`, `/add_admin user_id`, or reply to a user.",
+            quote=True
+        )
 
-    existing = await Admins.find_one({"_id": user_id})
-    if existing and existing.get("is_admin", False):
+    if await check_admin(user_id):
         return await message.reply(f"⚠️ `{user_id}` is already an admin.")
 
-    await Admins.update_one({"_id": user_id}, {"$set": {"is_admin": True}}, upsert=True)
-    return await message.reply(f"✅ User `{user_id}` has been added as admin.", quote=True)
+    await add_admin(user_id)
+    return await message.reply(f"✅ `{name or user_id}` has been added as admin.", quote=True)
