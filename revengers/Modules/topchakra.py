@@ -1,3 +1,4 @@
+
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
@@ -5,14 +6,22 @@ from revengers.db import get_top_chakra
 
 @bot.on_message(filters.command("topchakra") & filters.group)
 async def top_chakra(bot, message: Message):
+    top_users = await get_top_chakra()
+
+    if not top_users:
+        return await message.reply("No Chakra holders found.")
+
     text = "**🏆 Top Chakra Holders:**\n\n"
-    async for user in get_top_chakra():
+    for idx, user in enumerate(top_users, start=1):
         user_id = user["_id"]
-        points = user["chakra"]
+        chakra = user.get("chakra", 0)
+
         try:
             user_info = await bot.get_users(user_id)
-            text += f"• [{user_info.first_name}](tg://user?id={user_id}) — `{points}` Chakra\n"
+            name = user_info.first_name
         except:
-            text += f"• Unknown (`{user_id}`) — `{points}` Chakra\n"
+            name = "Unknown"
 
-    await message.reply(text)
+        text += f"{idx}. [{name}](tg://user?id={user_id}) — `{chakra:,}` Chakra\n"
+
+    await message.reply(text, quote=True)
