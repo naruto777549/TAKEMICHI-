@@ -11,7 +11,6 @@ users = Users  # alias
 Admins = db["admins"]
 Banned = []  # local cache (if needed)
 file_collection = db["files"]
-Admins = db["admins"]
 waifu_collection = db["waifus"]
 afk_collection = db["afk"]
 
@@ -34,3 +33,21 @@ async def remove_afk(user_id: int) -> None:
 async def get_afk(user_id: int) -> dict | None:
     """Retrieve AFK data of a user, if any."""
     return await afk_collection.find_one({"user_id": user_id})
+
+# Admin Utilities
+async def add_admin(user_id: int) -> None:
+    """Add a user as an admin in the database."""
+    await Admins.update_one(
+        {"_id": user_id},
+        {"$set": {"is_admin": True}},
+        upsert=True
+    )
+
+async def is_admin(user_id: int) -> bool:
+    """Check if a user is an admin."""
+    admin = await Admins.find_one({"_id": user_id, "is_admin": True})
+    return bool(admin)
+
+async def remove_admin(user_id: int) -> None:
+    """Remove a user from admin status."""
+    await Admins.delete_one({"_id": user_id})
