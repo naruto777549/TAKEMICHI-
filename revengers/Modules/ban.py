@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Banned
-from revengers.config import ADMINS
+from config import ADMINS
 
 # ✅ Check if user is admin
 async def is_admin(user_id: int) -> bool:
