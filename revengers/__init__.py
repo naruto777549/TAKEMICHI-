@@ -1,3 +1,5 @@
+from datetime import datetime
+start_time = datetime.utcnow()
 from pyrogram import Client
 from config import API_ID, API_HASH, BOT_TOKEN
 
