@@ -26,10 +26,8 @@ async def tag_all(bot, message: Message):
     for i in range(0, len(users), BATCH_SIZE):
         mention_text = ""
         for user in users[i:i + BATCH_SIZE]:
-            if user.username:
-                mention = f"@{user.username}"
-            else:
-                mention = f"[{user.first_name}](tg://user?id={user.id})"
+            name = user.first_name.replace("[", "").replace("]", "")  # Prevent markdown issues
+            mention = f"[{name}](tg://user?id={user.id})"
             mention_text += f"{symbol} {mention}\n"
 
         final_text = f"{custom_msg}\n\n{mention_text}" if custom_msg else mention_text
