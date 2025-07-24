@@ -23,13 +23,20 @@ async def daily_points(bot, message: Message):
     
     await claim_daily(user_id, DAILY_POINTS)
     return await message.reply(f"✅ You received {DAILY_POINTS} Chakra Points today!")
-
 # /bal — Check your Chakra balance
 @bot.on_message(filters.command("bal") & filters.group)
 async def chakra_balance(bot, message: Message):
-    user_id = message.from_user.id
+    user = message.from_user
+    user_id = user.id
     balance = await get_user_chakra(user_id)
-    return await message.reply(f"💠 Your Chakra Balance: `{balance} points`")
+
+    text = f"""✨ <b>Balance Check</b>
+
+👤 <b>User:</b> {user.mention}
+💠 <b>Chakra:</b> <code>{balance:,} points</code>
+"""
+
+    await message.reply(text, parse_mode=ParseMode.HTML)
 
 # Reward Chakra Points for saying "good" or "nice" in replies
 @bot.on_message(filters.reply & filters.text & filters.group)
