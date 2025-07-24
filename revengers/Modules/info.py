@@ -18,9 +18,8 @@ async def user_info(bot, message: Message):
     except:
         bio = "No bio available"
 
-    # Get Chakra points from database
-    user_data = await get_user_chakra(user_id)
-    chakra = user_data.get("chakra", 0) if user_data else 0
+    # Get Chakra points from database (now returns int)
+    chakra = await get_user_chakra(user_id)
 
     # Check user role in the group
     try:
