@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Admins
-from revengers.utils.checks import is_admin
+from revengers.utils.is_admin import is_admin
 
 async def extract_user_id(message: Message):
     if message.reply_to_message:
