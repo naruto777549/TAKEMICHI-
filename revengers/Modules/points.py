@@ -1,13 +1,13 @@
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
-from revengers.db import ChakraPoints
+from revengers.db import chakra_users
 from datetime import datetime, timedelta
 import re
 
 # How many points for daily and messages
-DAILY_POINTS = 20
-REWARD_POINTS = 5
+DAILY_POINTS = 100
+REWARD_POINTS = 25
 
 # Utility to fetch or create user data
 async def get_user_points(user_id):
