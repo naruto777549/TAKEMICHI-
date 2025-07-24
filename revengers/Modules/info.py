@@ -50,7 +50,7 @@ async def user_info(bot, message: Message):
 
     # Try sending profile photo
     try:
-        photos = await bot.get_user_profile_photos(user_id, limit=1)
+        photos = await bot.get_profile_photos(user_id, limit=1)
         if photos.total_count > 0:
             await message.reply_photo(photos.photos[0].file_id, caption=caption)
         else:
