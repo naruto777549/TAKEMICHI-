@@ -2,9 +2,13 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Banned
-from revengers.utils.is_admin import is_admin  # ✅ Admin check
+from revengers.config import ADMINS
 
-# ✅ Helper to extract user from reply, @username, or user ID
+# ✅ Check if user is admin
+async def is_admin(user_id: int) -> bool:
+    return user_id in ADMINS
+
+# ✅ Extract user ID from message
 async def extract_user_id(message: Message):
     if message.reply_to_message:
         return message.reply_to_message.from_user.id, message.reply_to_message.from_user.first_name
@@ -14,7 +18,6 @@ async def extract_user_id(message: Message):
 
     arg = message.command[1]
 
-    # Username format
     if arg.startswith("@"):
         try:
             user = await bot.get_users(arg)
@@ -22,31 +25,32 @@ async def extract_user_id(message: Message):
         except:
             return None, None
 
-    # Numeric ID format
     if arg.isdigit():
         return int(arg), None
 
     return None, None
 
-
+# ✅ Hardban command
 @bot.on_message(filters.command("hardban") & filters.private)
 async def hardban_user(bot, message: Message):
     if not await is_admin(message.from_user.id):
         return await message.reply("🚫 You are not authorized to use this command.")
 
     user_id, user_name = await extract_user_id(message)
-
     if not user_id:
-        return await message.reply("❌ Usage: `/hardban @username [reason]`, `/hardban user_id`, or reply to user.", quote=True)
+        return await message.reply("❌ Usage: `/hardban @username`, `/hardban user_id`, or reply to user.", quote=True)
 
     if await is_admin(user_id):
         return await message.reply("⚠️ You cannot ban another admin.", quote=True)
 
-    if user_id in Banned:
+    # Check if already banned
+    if await Banned.find_one({"_id": user_id}):
         return await message.reply("⚠️ User is already hardbanned.", quote=True)
 
     reason = " ".join(message.command[2:]) if len(message.command) > 2 else "No reason provided"
-    Banned.append(user_id)
+
+    # Add to banlist
+    await Banned.insert_one({"_id": user_id, "reason": reason, "banned_by": message.from_user.id})
 
     try:
         await bot.send_message(
@@ -62,21 +66,20 @@ async def hardban_user(bot, message: Message):
         f"✅ User `{user_id}` has been hardbanned.\n📝 Reason: `{reason}`", quote=True
     )
 
-
+# ✅ Unhardban command
 @bot.on_message(filters.command("unhardban") & filters.private)
 async def unhardban_user(bot, message: Message):
     if not await is_admin(message.from_user.id):
         return await message.reply("🚫 You are not authorized to use this command.")
 
     user_id, user_name = await extract_user_id(message)
-
     if not user_id:
         return await message.reply("❌ Usage: `/unhardban @username`, `/unhardban user_id`, or reply to user.", quote=True)
 
-    if user_id not in Banned:
+    if not await Banned.find_one({"_id": user_id}):
         return await message.reply("⚠️ User is not hardbanned.", quote=True)
 
-    Banned.remove(user_id)
+    await Banned.delete_one({"_id": user_id})
 
     try:
         await bot.send_message(chat_id=user_id, text="✅ You have been unhardbanned. You can now use the bot again.")
