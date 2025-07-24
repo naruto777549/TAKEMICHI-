@@ -4,7 +4,7 @@ from pyrogram.types import Message
 from revengers import bot
 from revengers.db import get_top_chakra
 
-@bot.on_message(filters.command("topchakra") & filters.group)
+@bot.on_message(filters.command("rank") & filters.group)
 async def top_chakra(bot, message: Message):
     top_users = await get_top_chakra()
 
