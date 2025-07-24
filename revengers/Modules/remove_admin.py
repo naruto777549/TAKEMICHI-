@@ -20,9 +20,9 @@ async def extract_user_id(message: Message):
         return int(arg)
     return None
 
-@bot.on_message(filters.command("remove_admin") & filters.private)
+@bot.on_message(filters.command("remove_admin"))  # Removed .private
 async def remove_admin_cmd(bot, message: Message):
-    if not await is_admin(message.from_user.id):
+    if not await is_admin(message.from_user.id):  # Proper check
         return await message.reply("🚫 You're not authorized to use this.")
 
     user_id = await extract_user_id(message)
