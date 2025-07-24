@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 
-@bot.on_message(filters.command(["all", ".all", "@all"]) & filters.group)
+@bot.on_message(filters.command("all", prefix=["/", "@", "~", "."]) & filters.group)
 async def tag_all(bot, message: Message):
     symbol = "➤"  # Customize this symbol if you want
 
