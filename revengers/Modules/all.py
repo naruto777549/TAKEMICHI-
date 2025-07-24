@@ -16,8 +16,7 @@ async def tag_all(bot, message: Message):
 
     # Optional custom message
     text = message.text.split(None, 1)
-    custom_msg = text[1] if len(text) 
-> 1 else None
+    custom_msg = text[1] if len(text) > 1 else None
 
     # Reply target if the command is replying to a message
     reply_to = message.reply_to_message.id if message.reply_to_message else None
