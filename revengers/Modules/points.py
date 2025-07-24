@@ -23,7 +23,12 @@ async def daily_points(bot, message: Message):
         return await message.reply("⏳ You already claimed your daily Chakra. Try again tomorrow.")
 
     await claim_daily(user_id, DAILY_POINTS)
-    return await message.reply(f"✅ You received {DAILY_POINTS} Chakra Points today!")
+    new_balance = await get_user_chakra(user_id)
+
+    text = f"""🎁 <b>Daily Bonus:</b> You received <code>{DAILY_POINTS:,}</code> Chakra!
+💰 <b>New Balance:</b> <code>{new_balance:,}</code>"""
+
+    return await message.reply(text, parse_mode=ParseMode.HTML)
 
 # /bal — Check your Chakra balance
 @bot.on_message(filters.command("bal") & filters.group)
