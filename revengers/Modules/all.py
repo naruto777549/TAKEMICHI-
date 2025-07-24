@@ -4,28 +4,22 @@ from revengers import bot
 
 @bot.on_message(filters.command(["all", ".all", "@all"]) & filters.group)
 async def tag_all(bot, message: Message):
-    # Check if sender is admin
-    user_id = message.from_user.id
-    chat_id = message.chat.id
-
-    member = await bot.get_chat_member(chat_id, user_id)
-    if member.status not in ["administrator", "creator"]:
-        return await message.reply("🚫 Only group admins can use this command.")
-
-    symbol = "➤"  # Customize symbol if needed
+    symbol = "➤"  # Customize this symbol if you want
 
     # Fetch all chat members
     users = []
-    async for member in bot.get_chat_members(chat_id):
-        users.append(member.user)  # Include everyone
+    async for member in bot.get_chat_members(message.chat.id):
+        users.append(member.user)
 
     if not users:
         return await message.reply("⚠️ No members found to tag.")
 
     # Optional custom message
     text = message.text.split(None, 1)
-    custom_msg = text[1] if len(text) > 1 else None
+    custom_msg = text[1] if len(text) 
+> 1 else None
 
+    # Reply target if the command is replying to a message
     reply_to = message.reply_to_message.id if message.reply_to_message else None
 
     # Batch mentions (limit 5 per message to avoid flood)
