@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
 from revengers.db import Admins
-from revengers.helpers.is_admin import is_admin
+from revengers.utils.is_admin import is_admin
 
 @bot.on_message(filters.command("add_admin") & (filters.group | filters.private) & is_admin)
 async def add_admin(bot, message: Message):
