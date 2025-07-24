@@ -14,43 +14,42 @@ async def user_info(bot, message: Message):
     # Get user bio
     try:
         full_info = await bot.get_chat(user_id)
-        bio = full_info.bio or "No Bio"
+        bio = full_info.bio or "No bio available"
     except:
-        bio = "No Bio"
+        bio = "No bio available"
 
     # Get Chakra points from database
     user_data = await get_user_chakra(user_id)
-    points = user_data.get("chakra", 0) if user_data else 0
+    chakra = user_data.get("chakra", 0) if user_data else 0
 
-    # Check if admin
+    # Check user role in the group
     try:
         member = await bot.get_chat_member(message.chat.id, user_id)
-        status = member.status
-        if status == "creator":
+        if member.status == "creator":
             title = "Owner 👑"
-        elif status == "administrator":
+        elif member.status == "administrator":
             title = "Admin 🔱"
         else:
             title = "Member"
     except:
         title = "Unknown"
 
-    # Caption
+    # Build caption
     caption = f"""
 ✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦
-✧        🌌  {mention}  🌌        ✧
+✧       🌌  {mention}  🌌       ✧
 ✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦
 ║ Username: {username}
 ║ User ID: `{user_id}`
-║ Title: {title}
-║ Chakra: `{points}`
+║ Role: {title}
+║ Chakra: `{chakra}`
 ║ Bio: {bio}
 ✧✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧
-✦        🌙  NARUTO STYLE  🌙        ✦
+✦     🌙  NARUTO STYLE  🌙     ✦
 ✧✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧
 """
 
-    # Send profile photo with caption
+    # Try sending profile photo
     try:
         photos = await bot.get_user_profile_photos(user_id, limit=1)
         if photos.total_count > 0:
@@ -58,4 +57,4 @@ async def user_info(bot, message: Message):
         else:
             await message.reply(caption)
     except PeerIdInvalid:
-        await message.reply("Can't fetch profile photo.")
+        await message.reply("Unable to fetch profile photo.")
