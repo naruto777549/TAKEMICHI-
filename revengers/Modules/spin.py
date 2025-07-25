@@ -1,4 +1,5 @@
 import random
+import asyncio
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
@@ -21,6 +22,10 @@ async def spin_command(bot, message: Message):
         {"_id": user_id}, {"$inc": {"chakra": -50}}, upsert=True
     )
 
+    # Initial spinning animation
+    spinning_msg = await message.reply("🎰 Spinning...")
+    await asyncio.sleep(1.5)
+
     # Slot machine logic
     slots = ["🍒", "🍋", "🍉", "🍇", "⭐", "🍀"]
     result = [random.choice(slots) for _ in range(3)]
@@ -36,10 +41,10 @@ async def spin_command(bot, message: Message):
     # Add reward chakra
     await add_chakra(user_id, reward)
 
-    # Respond to user
-    await message.reply(
+    # Final result message
+    await spinning_msg.edit_text(
         f"🎰 | {' | '.join(result)} | 🎰\n\n"
-        f"🎉 You won: `{reward}` Chakra Points!\n"
+        f"🏆 You won: `{reward}` Chakra Points!\n"
         f"💸 Spin Cost: `50`\n"
         f"🪙 New Balance: `{chakra - 50 + reward}`"
     )
