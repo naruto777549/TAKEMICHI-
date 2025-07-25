@@ -1,8 +1,10 @@
 from pyrogram import filters
 from pyrogram.types import Message
+from pyrogram.errors import PeerIdInvalid
+from pyrogram.raw.functions.photos import GetUserPhotos
+
 from revengers import bot
 from revengers.db import get_user_chakra
-from pyrogram.errors import PeerIdInvalid
 
 @bot.on_message(filters.command("info") & filters.group)
 async def user_info(bot, message: Message):
@@ -18,7 +20,7 @@ async def user_info(bot, message: Message):
     except:
         bio = "No bio available"
 
-    # Get Chakra points from database (now returns int)
+    # Get Chakra points (already an int)
     chakra = await get_user_chakra(user_id)
 
     # Check user role in the group
@@ -48,12 +50,27 @@ async def user_info(bot, message: Message):
 ✧✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧
 """
 
-    # Try sending profile photo
+    # Use raw API to get profile photo
     try:
-        photos = await bot.get_profile_photos(user_id, limit=1)
-        if photos.total_count > 0:
-            await message.reply_photo(photos.photos[0].file_id, caption=caption)
+        user_peer = await bot.resolve_peer(user_id)
+        photos = await bot.invoke(GetUserPhotos(
+            user_id=user_peer,
+            offset=0,
+            max_id=0,
+            limit=1
+        ))
+
+        if photos.photos:
+            await bot.send_photo(
+                chat_id=message.chat.id,
+                photo=photos.photos[0],
+                caption=caption,
+                reply_to_message_id=message.id
+            )
         else:
             await message.reply(caption)
     except PeerIdInvalid:
         await message.reply("Unable to fetch profile photo.")
+    except Exception as e:
+        print(f"Error fetching profile photo: {e}")
+        await message.reply(caption)
