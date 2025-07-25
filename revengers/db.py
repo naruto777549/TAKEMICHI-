@@ -9,6 +9,7 @@ db = client["revengers"]
 Users = db["users"]
 users = Users  # alias
 Admins = db["admins"]
+warns = db["warns"]
 chakra_users = db["chakra_users"]
 Banned = []  # local cache (if needed)
 file_collection = db["files"]
