@@ -11,46 +11,46 @@ async def user_info(bot, message: Message):
     user = message.reply_to_message.from_user if message.reply_to_message else message.from_user
     user_id = user.id
     mention = user.mention
-    username = f"@{user.username}" if user.username else "No Username"
+    username = f"@{user.username}" if user.username else "—"
 
     # Get user bio
     try:
         full_info = await bot.get_chat(user_id)
-        bio = full_info.bio or "No bio available"
+        bio = full_info.bio or "—"
     except:
-        bio = "No bio available"
+        bio = "—"
 
-    # Get Chakra points (already an int)
+    # Chakra points
     chakra = await get_user_chakra(user_id)
 
-    # Check user role in the group
+    # Determine role/title
     try:
         member = await bot.get_chat_member(message.chat.id, user_id)
         if member.status == "creator":
-            title = "Owner 👑"
+            title = "👑 Owner"
         elif member.status == "administrator":
-            title = "Admin 🔱"
+            title = "🛡️ Co-Owner" if member.can_manage_chat else "⚔️ Admin"
         else:
-            title = "Member"
+            title = "👤 Member"
     except:
-        title = "Unknown"
+        title = "❓ Unknown"
 
-    # Build caption
+    # Naruto style caption
     caption = f"""
-✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦
-✧       🌌  {mention}  🌌       ✧
-✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦
-║ Username: {username}
-║ User ID: `{user_id}`
-║ Role: {title}
-║ Chakra: `{chakra}`
-║ Bio: {bio}
-✧✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧
-✦     🌙  NARUTO STYLE  🌙     ✦
-✧✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧✦✦✧
+🍥 𝗨𝘇𝘂𝗺𝗮𝗸𝗶 𝗖𝗵𝗮𝗸𝗿𝗮 𝗦𝗲𝗻𝘀𝗲 🍥
+
+👤 Name: {mention}
+🔗 Username: {username}
+🆔 ID: `{user_id}`
+🎖️ Title: {title}
+💠 Chakra: `{chakra}`
+📝 Bio: {bio}
+
+━━━━━━━━━━━━━━━━━━
+🌀 Powered by NARUTO BOT 🌀
 """
 
-    # Use raw API to get profile photo
+    # Try getting profile photo using raw API
     try:
         user_peer = await bot.resolve_peer(user_id)
         photos = await bot.invoke(GetUserPhotos(
