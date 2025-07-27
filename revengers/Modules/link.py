@@ -30,6 +30,7 @@ async def link_command(bot, message: Message):
 
 from pyrogram import filters
 from pyrogram.types import Message
+from yt_dlp import YoutubeDL
 from revengers import bot
 from revengers.db import get_user_chakra, chakra_users, remove_chakra
 import re
@@ -73,3 +74,18 @@ async def link_handler(bot, message: Message):
             )
     elif text.startswith("http"):
         await message.reply("❌ Only YouTube or Instagram links are supported.")
+
+async def download_video_from_link(link: str, user_id: int):
+    try:
+        filename = f"{user_id}_video.%(ext)s"
+        ydl_opts = {
+            'outtmpl': filename,
+            'format': 'best[ext=mp4]',
+        }
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([link])
+        return filename.replace('%(ext)s', 'mp4')
+    except Exception as e:
+        print(f"Error downloading: {e}")
+        return None
+
