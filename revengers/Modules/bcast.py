@@ -16,17 +16,19 @@ async def broadcast_handler(bot, message: Message):
     original = message.reply_to_message
     keyboard = original.reply_markup if isinstance(original.reply_markup, InlineKeyboardMarkup) else None
 
-    total = 0
+    total_users = 0
+    total_groups = 0
     success = 0
     failed = 0
     blocked = 0
 
+    # 🔹 Send to users
     async for user in Users.find():
         user_id = user["_id"]
         if user_id in Banned:
             continue
 
-        total += 1
+        total_users += 1
         try:
             if original.text:
                 await bot.send_message(user_id, text=original.text, reply_markup=keyboard)
@@ -40,16 +42,39 @@ async def broadcast_handler(bot, message: Message):
                 failed += 1
                 continue
             success += 1
-
         except (UserIsBlocked, InputUserDeactivated, PeerIdInvalid, ChatWriteForbidden):
             blocked += 1
             failed += 1
         except:
             failed += 1
 
+    # 🔹 Send to groups
+    async for group in Groups.find():
+        group_id = group["_id"]
+
+        total_groups += 1
+        try:
+            if original.text:
+                await bot.send_message(group_id, text=original.text, reply_markup=keyboard)
+            elif original.photo:
+                await bot.send_photo(group_id, photo=original.photo.file_id, caption=original.caption or "", reply_markup=keyboard)
+            elif original.video:
+                await bot.send_video(group_id, video=original.video.file_id, caption=original.caption or "", reply_markup=keyboard)
+            elif original.document:
+                await bot.send_document(group_id, document=original.document.file_id, caption=original.caption or "", reply_markup=keyboard)
+            else:
+                failed += 1
+                continue
+            success += 1
+        except (ChatWriteForbidden, PeerIdInvalid):
+            failed += 1
+        except:
+            failed += 1
+
     await message.reply(
         f"📢 **Broadcast Completed**\n\n"
-        f"👥 Total Chats: `{total}`\n"
+        f"👤 Total Users: `{total_users}`\n"
+        f"👥 Total Groups: `{total_groups}`\n"
         f"✅ Delivered: `{success}`\n"
         f"⛔ Blocked/No Access: `{blocked}`\n"
         f"❌ Failed: `{failed}`"
