@@ -85,17 +85,17 @@ async def get_top_chakra(limit: int = 10):
     return top_users
 
 async def remove_chakra(user_id: int, amount: int):
-    async with aiosqlite.connect(DB_NAME) as db:
-        async with db.execute("SELECT points FROM chakra WHERE user_id = ?", (user_id,)) as cursor:
-            row = await cursor.fetchone()
-            if row:
-                current_points = row[0]
-                new_points = max(current_points - amount, 0)
-                await db.execute("UPDATE chakra SET points = ? WHERE user_id = ?", (new_points, user_id))
-            else:
-                new_points = 0
-                await db.execute("INSERT INTO chakra (user_id, points) VALUES (?, ?)", (user_id, new_points))
-        await db.commit()
+    user = await chakra_users.find_one({"_id": user_id})
+    if user:
+        current_chakra = user.get("chakra", 0)
+        new_chakra = max(current_chakra - amount, 0)
+        await chakra_users.update_one(
+            {"_id": user_id},
+            {"$set": {"chakra": new_chakra}}
+        )
+    else:
+        # Insert with 0 chakra if not found (optional)
+        await chakra_users.insert_one({"_id": user_id, "chakra": 0})
 
 # ----------------- Coin Balance System -----------------
 async def add_balance(user_id: int, amount: int):
