@@ -11,14 +11,14 @@ users = Users  # alias
 Admins = db["admins"]
 warns = db["warns"]
 chakra_users = db["chakra_users"]
-Banned = []  # local cache (if needed)
 file_collection = db["files"]
 waifu_collection = db["waifus"]
 afk_collection = db["afk"]
 
-# AFK Functions
+Banned = []  # optional cache
+
+# ----------------- AFK Functions -----------------
 async def set_afk(user_id: int, reason: str = "AFK") -> None:
-    """Set a user as AFK with a reason and timestamp."""
     await afk_collection.update_one(
         {"user_id": user_id},
         {"$set": {"reason": reason, "since": datetime.utcnow()}},
@@ -26,16 +26,13 @@ async def set_afk(user_id: int, reason: str = "AFK") -> None:
     )
 
 async def remove_afk(user_id: int) -> None:
-    """Remove a user from AFK state."""
     await afk_collection.delete_one({"user_id": user_id})
 
 async def get_afk(user_id: int) -> dict | None:
-    """Retrieve AFK data of a user, if any."""
     return await afk_collection.find_one({"user_id": user_id})
 
-# Admin Utilities
+# ----------------- Admin Utilities -----------------
 async def add_admin(user_id: int) -> None:
-    """Add a user as an admin in the database."""
     await Admins.update_one(
         {"_id": user_id},
         {"$set": {"is_admin": True}},
@@ -43,23 +40,18 @@ async def add_admin(user_id: int) -> None:
     )
 
 async def is_admin(user_id: int) -> bool:
-    """Check if a user is an admin."""
     admin = await Admins.find_one({"_id": user_id, "is_admin": True})
     return bool(admin)
 
 async def remove_admin(user_id: int) -> None:
-    """Remove a user from admin status."""
     await Admins.delete_one({"_id": user_id})
 
-
-# Chakra System
+# ----------------- Chakra System -----------------
 async def get_user_chakra(user_id: int) -> int:
-    """Get the chakra amount of a user."""
     user = await chakra_users.find_one({"_id": user_id})
     return user.get("chakra", 0) if user else 0
 
 async def add_chakra(user_id: int, amount: int):
-    """Add chakra to a user."""
     await chakra_users.update_one(
         {"_id": user_id},
         {"$inc": {"chakra": amount}},
@@ -67,14 +59,12 @@ async def add_chakra(user_id: int, amount: int):
     )
 
 async def can_claim_daily(user_id: int) -> bool:
-    """Check if the user can claim daily chakra."""
     user = await chakra_users.find_one({"_id": user_id})
     last = user.get("last_daily") if user else None
     today = datetime.utcnow().date()
     return not last or datetime.strptime(last, "%Y-%m-%d").date() < today
 
 async def claim_daily(user_id: int, amount: int = 100):
-    """Give daily chakra to user and update claim timestamp."""
     today = datetime.utcnow().strftime("%Y-%m-%d")
     await chakra_users.update_one(
         {"_id": user_id},
@@ -85,9 +75,7 @@ async def claim_daily(user_id: int, amount: int = 100):
         upsert=True
     )
 
-# Leaderboard
 async def get_top_chakra(limit: int = 10):
-    """Get top users sorted by chakra in descending order."""
     top_users = (
         await chakra_users.find()
         .sort("chakra", -1)
@@ -95,3 +83,22 @@ async def get_top_chakra(limit: int = 10):
         .to_list(length=limit)
     )
     return top_users
+
+# ----------------- Coin Balance System -----------------
+async def add_balance(user_id: int, amount: int):
+    await chakra_users.update_one(
+        {"_id": user_id},
+        {"$inc": {"balance": amount}},
+        upsert=True
+    )
+
+async def reduce_balance(user_id: int, amount: int):
+    await chakra_users.update_one(
+        {"_id": user_id},
+        {"$inc": {"balance": -amount}},
+        upsert=True
+    )
+
+async def get_balance(user_id: int) -> int:
+    user = await chakra_users.find_one({"_id": user_id})
+    return user.get("balance", 0) if user else 0
