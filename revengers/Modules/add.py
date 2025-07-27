@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from revengers.db import is_admin, add_chakra, get_user_chakra
+from revengers.db import is_admin, add_chakra, get_user_chakra, add_balance, reduce_balance, get_balance
 from pyrogram.errors import PeerIdInvalid, UsernameNotOccupied
 from revengers import bot
 import html
@@ -57,11 +57,6 @@ async def add_chakra_cmd(bot, message: Message):
         "/add <amount> (reply to user)\n"
         "/add @username <amount>"
     )
-
-from pyrogram import filters
-from pyrogram.types import Message
-from revengers.db import add_balance, reduce_balance, get_balance
-from revengers import bot  
 
 @bot.on_message(filters.command("give") & filters.private)
 async def give_coins(bot, message: Message):
