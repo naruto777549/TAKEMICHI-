@@ -7,10 +7,11 @@ from pyrogram.errors import (
     InputUserDeactivated,
     ChatWriteForbidden,
 )
-from revengers import bot
-from revengers.db import Users, Banned, get_all_groups, add_group, remove_group, is_admin
 
-ADMIN = 7576729648  # Set your Telegram user ID
+from revengers import bot
+from revengers.db import Users, Banned, get_all_groups, add_group, is_admin
+
+ADMIN = 7576729648  # Replace with your actual Telegram user ID
 
 
 async def get_all_users():
@@ -33,7 +34,7 @@ async def broadcast_handler(_, msg: Message):
         f"📢 Starting Broadcast...\n\n👤 Users: {len(users)} | 👥 Groups: {len(groups)}"
     )
 
-    # Broadcasting to Users
+    # Broadcast to Users
     for user in users:
         user_id = user["_id"]
         try:
@@ -45,7 +46,7 @@ async def broadcast_handler(_, msg: Message):
             failed_users += 1
         await asyncio.sleep(0.05)
 
-    # Broadcasting to Groups
+    # Broadcast to Groups
     for group in groups:
         group_id = group["_id"]
         try:
@@ -64,19 +65,10 @@ async def broadcast_handler(_, msg: Message):
     )
 
 
-# ✅ Auto Save Group on Join
-@bot.on_chat_member_updated()
-async def auto_save_group(_, update):
-    member = update.new_chat_member
-    if member and member.user and member.user.is_self:
-        if member.status == "member":
-            await add_group(update.chat.id, update.chat.title or "Unnamed")
-        elif member.status in ("kicked", "left"):
-            await remove_group(update.chat.id)
-
-@bot.on_my_chat_member()
-async def join_group_handler(client, message: types.ChatMemberUpdated):
-    if message.new_chat_member.status in ["member", "administrator"]:
-        group_id = message.chat.id
-        await add_group(group_id)  # function from db.py
-
+# ✅ Save group only when /start or command is used in a group
+@bot.on_message(filters.command("start") & filters.group)
+async def save_group_on_command(_, msg: Message):
+    group_id = msg.chat.id
+    group_title = msg.chat.title or "Unnamed"
+    await add_group(group_id, group_title)
+    await msg.reply_text("✅ This group has been saved to the database.")
