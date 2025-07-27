@@ -4,7 +4,7 @@ from pyrogram.errors import PeerIdInvalid, UserIsBlocked, InputUserDeactivated, 
 from revengers import bot
 from revengers.db import Users, Banned, get_all_groups
 from revengers.utils.checks import is_admin
-ADMIN = 7019600964
+ADMIN = 7576729648
 
 @bot.on_message(filters.command("broadcast") & filters.user(ADMIN))
 async def broadcast_handler(_, msg: Message):
