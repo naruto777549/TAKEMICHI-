@@ -7,6 +7,7 @@ db = client["revengers"]
 
 # Collections
 Users = db["users"]
+Groups = db["groups"]
 users = Users  # alias
 Admins = db["admins"]
 warns = db["warns"]
