@@ -103,3 +103,21 @@ async def reduce_balance(user_id: int, amount: int):
 async def get_balance(user_id: int) -> int:
     user = await chakra_users.find_one({"_id": user_id})
     return user.get("balance", 0) if user else 0
+
+# ----------------- Group Collection Functions -----------------
+async def add_group(group_id: int, title: str):
+    await Groups.update_one(
+        {"_id": group_id},
+        {"$set": {"title": title, "joined_at": datetime.utcnow()}},
+        upsert=True
+    )
+
+async def remove_group(group_id: int):
+    await Groups.delete_one({"_id": group_id})
+
+async def is_group_exist(group_id: int) -> bool:
+    group = await Groups.find_one({"_id": group_id})
+    return bool(group)
+
+async def get_all_groups():
+    return [group async for group in Groups.find({})]
