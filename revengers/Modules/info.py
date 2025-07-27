@@ -6,10 +6,12 @@ from pyrogram.raw.functions.photos import GetUserPhotos
 from revengers import bot
 from revengers.db import get_user_chakra
 
+
 @bot.on_message(filters.command("info") & filters.group)
 async def user_info(bot, message: Message):
     user = message.reply_to_message.from_user if message.reply_to_message else message.from_user
     user_id = user.id
+    first_name = user.first_name or "—"
     mention = user.mention
     username = f"@{user.username}" if user.username else "—"
 
@@ -20,37 +22,44 @@ async def user_info(bot, message: Message):
     except:
         bio = "—"
 
-    # Chakra points
     chakra = await get_user_chakra(user_id)
 
-    # Determine role/title
+    # Determine title
     try:
         member = await bot.get_chat_member(message.chat.id, user_id)
         if member.status == "creator":
-            title = "👑 Owner"
+            role = "👑 Owner"
         elif member.status == "administrator":
-            title = "🛡️ Co-Owner" if member.can_manage_chat else "⚔️ Admin"
+            role = "⚔️ Admin"
         else:
-            title = "👤 Member"
+            role = "👤 Member"
     except:
-        title = "❓ Unknown"
+        role = "❓ Unknown"
 
-    # Naruto style caption
+    # Premium status — placeholder for now
+    premium = "False"
+
+    # Naruto Style Caption
     caption = f"""
-🍥 𝗨𝘇𝘂𝗺𝗮𝗸𝗶 𝗖𝗵𝗮𝗸𝗿𝗮 𝗦𝗲𝗻𝘀𝗲 🍥
+─────⌈✦ 𝗨𝘀𝗲𝗿 𝗜𝗻𝗳𝗼𝗿𝗺𝗮𝘁𝗶𝗼𝗻 ✦⌋──────
 
-👤 Name: {mention}
-🔗 Username: {username}
-🆔 ID: `{user_id}`
-🎖️ Title: {title}
-💠 Chakra: `{chakra}`
-📝 Bio: {bio}
+✦ 𝗨𝘀𝗲𝗿 𝗜𝗗: `{user_id}`
+✦ 𝗙𝗶𝗿𝘀𝘁 𝗡𝗮𝗺𝗲: {first_name}
+✦ 𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲: {username}
+✦ 𝗟𝗶𝗻𝗸: {mention}
+✦ 𝗕𝗶𝗼: {bio}
 
-━━━━━━━━━━━━━━━━━━
-🌀 Powered by NARUTO BOT 🌀
+✦ 𝗚𝗹𝗼𝗯𝗮𝗹 𝗖𝗵𝗮𝗸𝗿𝗮 𝗣𝗼𝗶𝗻𝘁𝘀: `{chakra}` 🍥
+
+✦ 𝗣𝗿𝗲𝗺𝗶𝘂𝗺 𝗨𝘀𝗲𝗿? {premium}
+✦ 𝗣𝗿𝗲𝘀𝗲𝗻𝗰𝗲: {role}
+
+╭────────────────────╮  
+│   𝑵𝒂𝒓𝒖𝒕𝒐 𝑺𝒕𝒚𝒍𝒆   │  
+╰────────────────────╯
 """
 
-    # Try getting profile photo using raw API
+    # Try sending profile photo
     try:
         user_peer = await bot.resolve_peer(user_id)
         photos = await bot.invoke(GetUserPhotos(
