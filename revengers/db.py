@@ -85,17 +85,17 @@ async def get_top_chakra(limit: int = 10):
     return top_users
 
 async def remove_chakra(user_id: int, amount: int):
-    user = await chakra_users.find_one({"_id": user_id})
-    if user:
-        current_chakra = user.get("chakra", 0)
-        new_chakra = max(current_chakra - amount, 0)
-        await chakra_users.update_one(
-            {"_id": user_id},
-            {"$set": {"chakra": new_chakra}}
-        )
-    else:
-        # Insert with 0 chakra if not found (optional)
-        await chakra_users.insert_one({"_id": user_id, "chakra": 0})
+    user = await chakra_users.find_one({"_id": user_id})
+    if user:
+        current_chakra = user.get("chakra", 0)
+        new_chakra = max(current_chakra - amount, 0)
+        await chakra_users.update_one(
+            {"_id": user_id},
+            {"$set": {"chakra": new_chakra}}
+        )
+    else:
+        # Insert with 0 chakra if not found (optional)
+        await chakra_users.insert_one({"_id": user_id, "chakra": 0})
 
 # ----------------- Coin Balance System -----------------
 async def add_balance(user_id: int, amount: int):
