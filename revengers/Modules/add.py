@@ -3,7 +3,7 @@ from pyrogram.types import Message
 from revengers.db import is_admin, add_chakra, get_user_chakra
 from pyrogram.errors import PeerIdInvalid, UsernameNotOccupied
 from revengers import bot
-import html  # For escaping names safely
+import html
 
 @bot.on_message(filters.command("add") & filters.group)
 async def add_chakra_cmd(bot, message: Message):
@@ -16,6 +16,8 @@ async def add_chakra_cmd(bot, message: Message):
     if message.reply_to_message and len(message.command) == 2:
         try:
             target = message.reply_to_message.from_user
+            if not target:
+                return await message.reply("❌ Cannot identify the replied user.")
             amount = int(message.command[1])
         except ValueError:
             return await message.reply("❌ Invalid amount. Example: /add 100")
