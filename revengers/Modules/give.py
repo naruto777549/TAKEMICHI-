@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from db import add_balance, reduce_balance, get_balance
+from revengers.db import add_balance, reduce_balance, get_balance
 from revengers import bot  
 
 @bot.on_message(filters.command("give") & filters.private)
