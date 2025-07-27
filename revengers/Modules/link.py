@@ -58,8 +58,8 @@ async def link_handler(bot, message: Message):
             )
 
             try:
-                # 📥 Replace this with real video download logic
-                video_file = await download_video_from_link(text)
+                # 📥 Fixed: Pass user_id correctly
+                video_file = await download_video_from_link(text, user_id)
 
                 # 📤 Send the downloaded video
                 await message.reply_video(video_file, caption="Here's your video 🔥")
@@ -76,16 +76,16 @@ async def link_handler(bot, message: Message):
         await message.reply("❌ Only YouTube or Instagram links are supported.")
 
 async def download_video_from_link(link: str, user_id: int):
-    try:
-        filename = f"{user_id}_video.%(ext)s"
-        ydl_opts = {
-            'outtmpl': filename,
-            'format': 'best[ext=mp4]',
-        }
-        with YoutubeDL(ydl_opts) as ydl:
-            ydl.download([link])
-        return filename.replace('%(ext)s', 'mp4')
-    except Exception as e:
-        print(f"Error downloading: {e}")
-        return None
+    try:
+        filename = f"{user_id}_video.%(ext)s"
+        ydl_opts = {
+            'outtmpl': filename,
+            'format': 'best[ext=mp4]',
+        }
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([link])
+        return filename.replace('%(ext)s', 'mp4')
+    except Exception as e:
+        print(f"Error downloading: {e}")
+        return None
 
