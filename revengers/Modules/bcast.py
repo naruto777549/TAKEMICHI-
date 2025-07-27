@@ -73,3 +73,10 @@ async def auto_save_group(_, update):
             await add_group(update.chat.id, update.chat.title or "Unnamed")
         elif member.status in ("kicked", "left"):
             await remove_group(update.chat.id)
+
+@bot.on_my_chat_member()
+async def join_group_handler(client, message: types.ChatMemberUpdated):
+    if message.new_chat_member.status in ["member", "administrator"]:
+        group_id = message.chat.id
+        await add_group(group_id)  # function from db.py
+
