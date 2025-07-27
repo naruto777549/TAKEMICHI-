@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
 from pyrogram.errors import PeerIdInvalid, UserIsBlocked, InputUserDeactivated, ChatWriteForbidden
 from revengers import bot
-from revengers.db import Users, Banned, Groups
+from revengers.db import Users, Banned, 
 from revengers.utils.checks import is_admin
 
 @bot.on_message(filters.command("bcast") & filters.private)
