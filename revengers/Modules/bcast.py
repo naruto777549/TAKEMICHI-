@@ -2,80 +2,56 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup
 from pyrogram.errors import PeerIdInvalid, UserIsBlocked, InputUserDeactivated, ChatWriteForbidden
 from revengers import bot
-from revengers.db import Users, Banned
+from revengers.db import Users, Banned, get_all_groups
 from revengers.utils.checks import is_admin
 
-@bot.on_message(filters.command("bcast") & filters.private)
-async def broadcast_handler(bot, message: Message):
-    if not await is_admin(message.from_user.id):
-        return await message.reply("🚫 You're not authorized to use this.")
+@bot.on_message(filters.command("broadcast") & filters.user(ADMIN))
+async def broadcast_handler(_, msg: Message):
+    if not msg.reply_to_message:
+        return await msg.reply("📢 Please reply to a message to broadcast.")
 
-    if not message.reply_to_message:
-        return await message.reply("❗ Reply to a message (text/photo/video/document) to broadcast.")
+    broadcast_msg = msg.reply_to_message
 
-    original = message.reply_to_message
-    keyboard = original.reply_markup if isinstance(original.reply_markup, InlineKeyboardMarkup) else None
+    m = await msg.reply("🚀 Broadcasting started...")
 
-    total_users = 0
-    total_groups = 0
-    success = 0
-    failed = 0
-    blocked = 0
+    success_users = 0
+    failed_users = 0
+    success_groups = 0
+    failed_groups = 0
+
+    users = await get_all_users()
+    groups = await get_all_groups()
+
+    total_users = len(users)
+    total_groups = len(groups)
+
+    await m.edit(
+        f"📢 Starting Broadcast...\n\n👤 Users: {total_users} | 👥 Groups: {total_groups}"
+    )
 
     # 🔹 Send to users
-    async for user in Users.find():
+    for user in users:
         user_id = user["_id"]
-        if user_id in Banned:
-            continue
-
-        total_users += 1
         try:
-            if original.text:
-                await bot.send_message(user_id, text=original.text, reply_markup=keyboard)
-            elif original.photo:
-                await bot.send_photo(user_id, photo=original.photo.file_id, caption=original.caption or "", reply_markup=keyboard)
-            elif original.video:
-                await bot.send_video(user_id, video=original.video.file_id, caption=original.caption or "", reply_markup=keyboard)
-            elif original.document:
-                await bot.send_document(user_id, document=original.document.file_id, caption=original.caption or "", reply_markup=keyboard)
-            else:
-                failed += 1
-                continue
-            success += 1
-        except (UserIsBlocked, InputUserDeactivated, PeerIdInvalid, ChatWriteForbidden):
-            blocked += 1
-            failed += 1
-        except:
-            failed += 1
+            await broadcast_msg.copy(chat_id=user_id)
+            success_users += 1
+        except Exception:
+            failed_users += 1
+        await asyncio.sleep(0.05)
 
     # 🔹 Send to groups
-    async for group in Groups.find():
+    for group in groups:
         group_id = group["_id"]
-
-        total_groups += 1
         try:
-            if original.text:
-                await bot.send_message(group_id, text=original.text, reply_markup=keyboard)
-            elif original.photo:
-                await bot.send_photo(group_id, photo=original.photo.file_id, caption=original.caption or "", reply_markup=keyboard)
-            elif original.video:
-                await bot.send_video(group_id, video=original.video.file_id, caption=original.caption or "", reply_markup=keyboard)
-            elif original.document:
-                await bot.send_document(group_id, document=original.document.file_id, caption=original.caption or "", reply_markup=keyboard)
-            else:
-                failed += 1
-                continue
-            success += 1
-        except (ChatWriteForbidden, PeerIdInvalid):
-            failed += 1
-        except:
-            failed += 1
+            await broadcast_msg.copy(chat_id=group_id)
+            success_groups += 1
+        except Exception:
+            failed_groups += 1
+        await asyncio.sleep(0.05)
 
-    await message.reply(
-        f"📢 **Broadcast Completed**\n\n"
-        f"👤 Total Users: `{total_users}`\n"
-        f"👥 Total Groups: `{total_groups}`\n"
-        f"✅ Delivered: `{success}`\n"
-        f"⛔ Blocked/No Access: `{blocked}`\n"
-        f"❌ Failed: `{failed}`"
+    await m.edit(
+        f"✅ Broadcast Finished!\n\n"
+        f"👤 Users:\n   ✅ {success_users} | ❌ {failed_users}\n"
+        f"👥 Groups:\n   ✅ {success_groups} | ❌ {failed_groups}"
     )
+
