@@ -75,4 +75,4 @@ async def save_group_on_command(_, msg: Message):
     group_id = msg.chat.id
     group_title = msg.chat.title or "Unnamed"
     await add_group(group_id, group_title)
-    await msg.reply_text("✅ This group has been saved in the database.")
+    await msg.reply_text("USE THIS COMMAND IN PRIVATE (DM)")
