@@ -31,7 +31,7 @@ async def link_command(bot, message: Message):
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
-from revengers.db import get_user_chakra, remove_chakra
+from revengers.db import get_user_chakra, add_chakra, chakra_users
 import re
 
 # Regex for Instagram and YouTube URLs
