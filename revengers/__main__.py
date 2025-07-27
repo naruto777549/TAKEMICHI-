@@ -1,19 +1,37 @@
-import os
+import asyncio
 import importlib
+import os
+from pyrogram import Client
+from config import API_ID, API_HASH, BOT_TOKEN
 
-from revengers import bot
-from pyrogram import idle
+# Bot setup
+app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-def load_modules_from_directory(directory):
-    for filename in os.listdir(directory):
-        if filename.endswith(".py") and not filename.startswith("__"):
+# Module loading function
+async def load_modules():
+    modules_path = "revengers/Modules"
+    for filename in os.listdir(modules_path):
+        if filename.endswith(".py"):
             module_name = filename[:-3]
-            module_path = f"{directory.replace('/', '.')}.{module_name}"
             try:
-                importlib.import_module(module_path)
+                importlib.import_module(f"revengers.Modules.{module_name}")
                 print(f"✅ Loaded module: {module_name}")
             except Exception as e:
-                print(f"❌ Failed to load {module_name}: {e}")
+                print(f"❌ Failed to load module: {module_name} | Error: {e}")
 
+# Main bot loop
+async def main():
+    await load_modules()
+    print("🚀 All modules loaded. Starting bot...")
+    await app.start()
+    print("🤖 BOT IS READY!")
+    await idle()
+    await app.stop()
+    print("👋 BOT STOPPED.")
+
+# To keep the bot alive
+from pyrogram.idle import idle
+
+# Entry point
 if __name__ == "__main__":
-    load_modules_from_directory("revengers/Modules")
+    asyncio.run(main())
