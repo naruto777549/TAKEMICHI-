@@ -3,7 +3,7 @@ from pyrogram.types import Message
 from revengers.db import is_admin, add_chakra, get_user_chakra
 from pyrogram.errors import PeerIdInvalid, UsernameNotOccupied
 
-from bot import bot  # bot = Client(...) ho to use this
+from revengers import bot  # bot = Client(...) ho to use this
 
 @bot.on_message(filters.command("add") & filters.group)
 async def add_chakra_cmd(bot, message: Message):
