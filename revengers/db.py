@@ -8,6 +8,7 @@ db = client["revengers"]
 # Collections
 Users = db["users"]
 Groups = db["groups"]
+Banned = db["banned"]
 Admins = db["admins"]
 warns = db["warns"]
 chakra_users = db["chakra_users"]
