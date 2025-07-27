@@ -30,7 +30,7 @@ async def main():
     print("👋 BOT STOPPED.")
 
 # To keep the bot alive
-from pyrogram.idle import idle
+from pyrogram import idle
 
 # Entry point
 if __name__ == "__main__":
