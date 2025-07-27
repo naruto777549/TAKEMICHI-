@@ -7,16 +7,15 @@ from pyrogram.errors import (
     InputUserDeactivated,
     ChatWriteForbidden,
 )
-
 from revengers import bot
-from revengers.db import Users, Banned, get_all_groups
-from revengers.db import is_admin  # Import from db.py now
-from revengers.db import add_group  # If needed for join handler
+from revengers.db import Users, Banned, get_all_groups, add_group, remove_group, is_admin
 
 ADMIN = 7576729648  # Set your Telegram user ID
 
+
 async def get_all_users():
     return [user async for user in Users.find({}) if user["_id"] not in Banned]
+
 
 @bot.on_message(filters.command("broadcast") & filters.user(ADMIN))
 async def broadcast_handler(_, msg: Message):
@@ -63,3 +62,14 @@ async def broadcast_handler(_, msg: Message):
         f"👤 Users:\n   ✅ {success_users} | ❌ {failed_users}\n"
         f"👥 Groups:\n   ✅ {success_groups} | ❌ {failed_groups}"
     )
+
+
+# ✅ Auto Save Group on Join
+@bot.on_chat_member_updated()
+async def auto_save_group(_, update):
+    member = update.new_chat_member
+    if member and member.user and member.user.is_self:
+        if member.status == "member":
+            await add_group(update.chat.id, update.chat.title or "Unnamed")
+        elif member.status in ("kicked", "left"):
+            await remove_group(update.chat.id)
