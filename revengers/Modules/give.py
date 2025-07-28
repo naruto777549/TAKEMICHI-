@@ -4,7 +4,7 @@ from revengers import bot
 from revengers.db import add_balance, reduce_balance, get_balance
 
 @bot.on_message(filters.command("give") & (filters.group | filters.private))
-async def give_coins(bot, message: Message):
+async def give_chakra(bot, message: Message):
     if message.reply_to_message and len(message.text.split()) == 2:
         try:
             amount = int(message.text.split()[1])
@@ -42,8 +42,8 @@ async def give_coins(bot, message: Message):
 
     if sender_balance < amount:
         return await message.reply(
-            "😕 <b>You don’t have enough coins.</b>\n"
-            f"💼 <b>Your Balance:</b> <code>{sender_balance} 🪙</code>",
+            "😕 <b>You don’t have enough chakra points.</b>\n"
+            f"💼 <b>Your Balance:</b> <code>{sender_balance} 🔮</code>",
             quote=True
         )
 
@@ -52,9 +52,9 @@ async def give_coins(bot, message: Message):
     new_balance = await get_balance(user_id)
 
     await message.reply(
-        f"🎁 <b>Coins Sent Successfully!</b>\n\n"
+        f"🎁 <b>Chakra Points Sent Successfully!</b>\n\n"
         f"👤 <b>To:</b> @{username}\n"
-        f"💸 <b>Amount:</b> <code>{amount} 🪙</code>\n"
-        f"💼 <b>Receiver's Balance:</b> <code>{new_balance} 🪙</code>",
+        f"💸 <b>Amount:</b> <code>{amount} 🔮</code>\n"
+        f"💼 <b>Receiver's Balance:</b> <code>{new_balance} 🔮</code>",
         quote=True
     )
