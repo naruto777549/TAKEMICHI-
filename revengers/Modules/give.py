@@ -1,7 +1,7 @@
 from pyrogram import filters
 from pyrogram.types import Message
 from revengers import bot
-from revengers.db import add_balance, reduce_balance, get_balance
+from revengers.db import add_chakra, reduce_chakra, get_user_chakra
 
 @bot.on_message(filters.command("give") & (filters.group | filters.private))
 async def give_chakra(bot, message: Message):
