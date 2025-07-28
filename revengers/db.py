@@ -97,24 +97,12 @@ async def remove_chakra(user_id: int, amount: int):
         # Insert with 0 chakra if not found (optional)
         await chakra_users.insert_one({"_id": user_id, "chakra": 0})
 
-# ----------------- Coin Balance System -----------------
-async def add_balance(user_id: int, amount: int):
-    await chakra_users.update_one(
-        {"_id": user_id},
-        {"$inc": {"balance": amount}},
-        upsert=True
-    )
-
-async def reduce_balance(user_id: int, amount: int):
+async def reduce_chakra(user_id: int, amount: int):
     await chakra_users.update_one(
         {"_id": user_id},
         {"$inc": {"balance": -amount}},
         upsert=True
     )
-
-async def get_balance(user_id: int) -> int:
-    user = await chakra_users.find_one({"_id": user_id})
-    return user.get("balance", 0) if user else 0
 
 # ----------------- Group Collection Functions -----------------
 async def add_group(group_id: int, title: str):
