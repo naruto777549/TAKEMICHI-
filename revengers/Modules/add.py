@@ -27,7 +27,7 @@ async def add_coins_group(bot, message: Message):
             quote=True
         )
 
-    add_balance(user_id, amount)
+    await add_balance(user_id, amount)
 
     await message.reply(
         f"✅ <b>Coins Added Successfully!</b>\n\n"
