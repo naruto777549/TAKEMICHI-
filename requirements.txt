@@ -5,4 +5,3 @@ motor
 brain
 humanize
 psutil
-yt-dlp
