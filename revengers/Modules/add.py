@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from revengers.db import add_balance, get_user_chakra
+from revengers.db import add_chakra, get_user_chakra
 from revengers import bot
 
 @bot.on_message(filters.command("add") & filters.group)
