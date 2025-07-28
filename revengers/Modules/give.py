@@ -4,10 +4,9 @@ from pyrogram.errors import PeerIdInvalid, UsernameNotOccupied
 from revengers import bot
 from revengers.db import add_balance, reduce_balance, get_balance
 
-@bot.on_message(filters.command("give") & filters.private)
+@bot.on_message(filters.command("give"))  # <- Group and Private both
 async def give_coins(bot, message: Message):
     if message.reply_to_message and len(message.text.split()) == 2:
-        # Reply-based transfer
         try:
             amount = int(message.text.split()[1])
             user_id = message.reply_to_message.from_user.id
@@ -19,7 +18,6 @@ async def give_coins(bot, message: Message):
             )
 
     elif len(message.text.split()) == 3:
-        # Username-based transfer
         try:
             username = message.text.split()[1].replace("@", "")
             amount = int(message.text.split()[2])
