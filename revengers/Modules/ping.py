@@ -30,7 +30,7 @@ async def ping_handler(_, message: Message):
     # Send final message with image
     await reply.delete()
     await message.reply_photo(
-        photo="https://files.catbox.moe/v65paj.jpg",
+        photo="https://files.catbox.moe/vgbs0b.jpg",
         caption=(
             f"➻ ᴩᴏɴɢ : `{ping_ms:.3f}` ms\n\n"
             f"**{bot.me.first_name} sʏsᴛᴇᴍ sᴛᴀᴛs :**\n\n"
