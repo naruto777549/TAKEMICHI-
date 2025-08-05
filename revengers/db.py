@@ -1,128 +1,68 @@
-from datetime import datetime
+import os
+import json
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import MONGO_URL
 
-client = AsyncIOMotorClient(MONGO_URL)
-db = client["revengers"]
+# MongoDB URI
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://sufyan532011:5042@auctionbot.5ms20.mongodb.net/?retryWrites=true&w=majority&appName=AuctionBot")
 
-# Collections
-Users = db["users"]
-Groups = db["groups"]
-users = Users  # alias
-Admins = db["admins"]
-warns = db["warns"]
-chakra_users = db["chakra_users"]
-file_collection = db["files"]
-waifu_collection = db["waifus"]
-afk_collection = db["afk"]
-Banned = db["banned"]  # Make sure banned is a collection, not a list
+if not MONGO_URI or "null" in MONGO_URI:
+    raise ValueError("❌ MONGO_URI is missing or incorrect! Check your db.py file.")
 
-# ----------------- AFK Functions -----------------
-async def set_afk(user_id: int, reason: str = "AFK") -> None:
-    await afk_collection.update_one(
-        {"user_id": user_id},
-        {"$set": {"reason": reason, "since": datetime.utcnow()}},
-        upsert=True
-    )
+# Connect to MongoDB
+mongo_client = AsyncIOMotorClient(MONGO_URI)
+db = mongo_client["TAG_BOT"]
 
-async def remove_afk(user_id: int) -> None:
-    await afk_collection.delete_one({"user_id": user_id})
+# Add this collection
+tag_collection = db["active_tags"]
+users_collection = db["users"]
+groups_collection = db["groups"]
 
-async def get_afk(user_id: int) -> dict | None:
-    return await afk_collection.find_one({"user_id": user_id})
+async def save_user(user_id):
+    await users_collection.update_one({"_id": user_id}, {"$set": {"_id": user_id}}, upsert=True)
 
-# ----------------- Admin Utilities -----------------
-async def add_admin(user_id: int) -> None:
-    await Admins.update_one(
-        {"_id": user_id},
-        {"$set": {"is_admin": True}},
-        upsert=True
-    )
+async def save_group(group_id):
+    await groups_collection.update_one({"_id": group_id}, {"$set": {"_id": group_id}}, upsert=True)
 
-async def is_admin(user_id: int) -> bool:
-    admin = await Admins.find_one({"_id": user_id, "is_admin": True})
-    return bool(admin)
+async def save_user(user_id):
+    await users_collection.update_one({"_id": user_id}, {"$set": {"_id": user_id}}, upsert=True)
 
-async def remove_admin(user_id: int) -> None:
-    await Admins.delete_one({"_id": user_id})
+async def save_group(group_id):
+    await groups_collection.update_one({"_id": group_id}, {"$set": {"_id": group_id}}, upsert=True)
 
-# ----------------- Chakra System -----------------
-async def get_user_chakra(user_id: int) -> int:
-    user = await chakra_users.find_one({"_id": user_id})
-    return user.get("chakra", 0) if user else 0
-
-async def add_chakra(user_id: int, amount: int):
-    await chakra_users.update_one(
-        {"_id": user_id},
-        {"$inc": {"chakra": amount}},
-        upsert=True
-    )
-
-async def can_claim_daily(user_id: int) -> bool:
-    user = await chakra_users.find_one({"_id": user_id})
-    last = user.get("last_daily") if user else None
-    today = datetime.utcnow().date()
-    return not last or datetime.strptime(last, "%Y-%m-%d").date() < today
-
-async def claim_daily(user_id: int, amount: int = 100):
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    await chakra_users.update_one(
-        {"_id": user_id},
-        {
-            "$set": {"last_daily": today},
-            "$inc": {"chakra": amount}
-        },
-        upsert=True
-    )
-
-async def get_top_chakra(limit: int = 10):
-    top_users = (
-        await chakra_users.find()
-        .sort("chakra", -1)
-        .limit(limit)
-        .to_list(length=limit)
-    )
-    return top_users
-
-async def remove_chakra(user_id: int, amount: int):
-    user = await chakra_users.find_one({"_id": user_id})
-    if user:
-        current_chakra = user.get("chakra", 0)
-        new_chakra = max(current_chakra - amount, 0)
-        await chakra_users.update_one(
-            {"_id": user_id},
-            {"$set": {"chakra": new_chakra}}
-        )
-    else:
-        # Insert with 0 chakra if not found (optional)
-        await chakra_users.insert_one({"_id": user_id, "chakra": 0})
-
-async def reduce_chakra(user_id: int, amount: int):
-    await chakra_users.update_one(
-        {"_id": user_id},
-        {"$inc": {"balance": -amount}},
-        upsert=True
-    )
-
-# ----------------- Group Collection Functions -----------------
-async def add_group(group_id: int, title: str):
-    await Groups.update_one(
-        {"_id": group_id},
-        {"$set": {"title": title, "joined_at": datetime.utcnow()}},
-        upsert=True
-    )
-
-async def remove_group(group_id: int):
-    await Groups.delete_one({"_id": group_id})
-
-async def is_group_exist(group_id: int) -> bool:
-    group = await Groups.find_one({"_id": group_id})
-    return bool(group)
+async def get_all_users():
+    return users_collection.find()
 
 async def get_all_groups():
-    return [group async for group in Groups.find({})]
+    return groups_collection.find()
 
-# ----------------- Banned Check -----------------
-async def is_banned(user_id: int) -> bool:
-    banned = await Banned.find_one({"_id": user_id})
-    return bool(banned)
+# Start tagging
+async def start_tag(chat_id: int, user_id: int, text: str = None):
+    await tag_collection.update_one(
+        {"chat_id": chat_id},
+        {"$set": {
+            "chat_id": chat_id,
+            "user_id": user_id,
+            "text": text,
+            "active": True
+        }},
+        upsert=True
+    )
+
+# Stop tagging
+async def stop_tag(chat_id: int):
+    await tag_collection.delete_one({"chat_id": chat_id})
+
+# Check if active
+async def is_tagging_active(chat_id: int):
+    data = await tag_collection.find_one({"chat_id": chat_id})
+    return bool(data and data.get("active", False))
+
+# Get tag data
+async def get_tag_data(chat_id: int):
+    return await tag_collection.find_one({"chat_id": chat_id})
+
+async def get_total_users():
+    return await users_collection.count_documents({})
+
+async def get_total_groups():
+    return await groups_collection.count_documents({})
