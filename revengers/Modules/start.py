@@ -25,7 +25,7 @@ async def start_private(_, message: Message):
                 InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ", url="https://t.me/NARUTO_X_SUPPORT")
             ]
         ]),
-        disable_web_page_preview=True
+        link_preview_options=None  # Replace disable_web_page_preview with this
     )
 
 
@@ -35,4 +35,4 @@ async def start_group(_, message: Message):
     await save_group(message.chat.id)
     await message.reply_text(
         "✅ ʙᴏᴛ ᴀᴅᴅᴇᴅ ᴛᴏ ɢʀᴏᴜᴘ & sᴀᴠᴇᴅ ɪɴ ᴅᴀᴛᴀʙᴀsᴇ.\n\n💡 ᴘʟᴇᴀsᴇ ᴜsᴇ /start ɪɴ ᴅᴍ ғᴏʀ ғᴜʟʟ ᴍᴇɴᴜ"
-    ) 
+    )
