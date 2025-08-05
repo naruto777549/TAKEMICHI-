@@ -1,7 +1,6 @@
 kurigram
 tgcrypto 
 pymongo
+python-dotenv
 motor
-brain
-humanize
-psutil
+psutil 
