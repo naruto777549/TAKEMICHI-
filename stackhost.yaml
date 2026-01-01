@@ -1,15 +1,16 @@
 user:
-  name: NARUTO
-  github: NARUTO-max007
+  name: "ishikki"
+  github: "ishikki-akabane"
 
-language: "python"
-python_version: "3.10"
+runtime:
+  image: "python:3.11-slim"
 
 commands:
+  package: ""
   build:
     - "pip install -r requirements.txt"
-  start:
-    - "python3 -m revengers"
+  start: "python -m revengers"
 
-env:
-  - "ENVIRONMENT=production"
+repository:
+  branch: "main"
+  auto_deploy: true
