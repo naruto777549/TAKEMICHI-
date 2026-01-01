@@ -1,9 +1,9 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from revengers import app
+from revengers import bot
 
 
-@app.on_message(filters.command("start") & filters.private)
+@bot.on_message(filters.command("start") & filters.private)
 async def start_command(_, message: Message):
     await message.reply_text(
         "👋 Hello!\n\n"
