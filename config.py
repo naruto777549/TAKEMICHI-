@@ -1,6 +1,8 @@
-import os
+# config.py
 
-API_ID = int(os.getenv("API_ID"))
-API_HASH = os.getenv("API_HASH")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMINS = list(map(int, os.getenv("ADMINS").split(",")))
+API_ID = 21218274
+API_HASH = "3474a18b61897c672d315fb330edb213"
+BOT_TOKEN = "8512442665:AAEdqgLMDgy01E2FYdcuACvicmngYeyH4Zo"
+
+# Admin user IDs (list me rakho)
+ADMINS = [7576729648]
